@@ -1,0 +1,1893 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>메디세이프 현장 시뮬레이션 · 전산실 편</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* ── 색 토큰: 브로셔(앞·뒷면)와 같은 팔레트 ── */
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#ffffff; --surface:#ffffff; --tint:#eef3ff; --tint-2:#e3ecff; --line:#d5dceb;
+  --ink:#0f1b33; --sub:#3d4a63; --mute:#4a5568;
+  --brand:#1b3f9e; --brand-deep:#122c73; --brand-ink:#1b3f9e;
+  --on-brand:#ffffff; --on-brand-mid:#e6ecff; --on-brand-soft:#c7d5ff;
+  --navy:#0f1b33; --on-navy:#ffffff; --on-navy-soft:#c7d5ff;
+  --red:#b3261e; --red-tint:#fff7f5; --red-line:#f3d3cf;
+  --gray-tint:#f3f5f9;
+  --logo-bg:transparent;
+  --shadow:0 10px 30px rgba(15,27,51,.10);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0a1226; --surface:#101b36; --tint:#16264a; --tint-2:#1d3160; --line:#2b3c66;
+    --ink:#eaf0ff; --sub:#b9c5e0; --mute:#97a5c6;
+    --brand:#2a52c2; --brand-deep:#1b3f9e; --brand-ink:#9db8ff;
+    --on-brand:#ffffff; --on-brand-mid:#e6ecff; --on-brand-soft:#c7d5ff;
+    --navy:#1a2a52; --on-navy:#ffffff; --on-navy-soft:#c7d5ff;
+    --red:#ff9a8f; --red-tint:#2e1618; --red-line:#5a2a2c;
+    --gray-tint:#141f3c;
+    --logo-bg:#ffffff;
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0a1226; --surface:#101b36; --tint:#16264a; --tint-2:#1d3160; --line:#2b3c66;
+  --ink:#eaf0ff; --sub:#b9c5e0; --mute:#97a5c6;
+  --brand:#2a52c2; --brand-deep:#1b3f9e; --brand-ink:#9db8ff;
+  --on-brand:#ffffff; --on-brand-mid:#e6ecff; --on-brand-soft:#c7d5ff;
+  --navy:#1a2a52; --on-navy:#ffffff; --on-navy-soft:#c7d5ff;
+  --red:#ff9a8f; --red-tint:#2e1618; --red-line:#5a2a2c;
+  --gray-tint:#141f3c;
+  --logo-bg:#ffffff;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 150px);-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  font-size:15px;line-height:1.65;word-break:keep-all;overflow-wrap:anywhere;
+}
+h1,h2,h3,p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--brand-ink);outline-offset:2px;border-radius:8px}
+[hidden]{display:none !important}
+
+.wrap{max-width:780px;margin:0 auto;padding:0 20px}
+
+/* ── 상단 고정 영역 ── */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:10px;height:56px}
+.logo{display:inline-flex;align-items:center;background:var(--logo-bg);border-radius:8px;padding:3px 6px;margin-left:-6px}
+.logo img{height:24px;width:auto;display:block}
+.pill{font-size:12px;font-weight:700;color:var(--brand-ink);border:1px solid var(--brand-ink);border-radius:999px;padding:3px 11px;white-space:nowrap}
+.bar .spacer{flex:1}
+.link-btn{background:none;border:0;padding:8px 4px;font-size:13px;font-weight:500;color:var(--mute);text-decoration:underline;text-underline-offset:3px}
+.link-btn:hover{color:var(--ink)}
+.link-btn + .link-btn{margin-left:8px}
+.logo{cursor:default;-webkit-tap-highlight-color:transparent;user-select:none}
+
+/* 수용도 게이지 */
+.gauge{padding:2px 0 12px}
+.gauge-top{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+.gauge-label{font-size:12px;font-weight:700;color:var(--mute)}
+.gauge-quote{font-size:14px;font-weight:900;color:var(--ink)}
+.gauge-num{margin-left:auto;font-size:13px;font-weight:700;color:var(--mute);font-variant-numeric:tabular-nums}
+.gauge-num b{font-size:20px;font-weight:900;color:var(--ink)}
+.gauge-delta{font-size:12px;font-weight:900;border-radius:999px;padding:1px 8px;opacity:0;transition:opacity .2s}
+.gauge-delta.show{opacity:1}
+.gauge-delta.up{background:var(--tint-2);color:var(--brand-ink)}
+.gauge-delta.down{background:var(--red-tint);color:var(--red);border:1px solid var(--red-line)}
+.gauge-track{position:relative;height:12px;border-radius:999px;background:var(--tint)}
+.gauge-fill{position:absolute;inset:0 auto 0 0;border-radius:999px;background:var(--brand);transition:width .6s cubic-bezier(.2,.7,.2,1)}
+.gauge-fill.low{background:var(--red)}
+.gauge-target{position:absolute;top:-4px;bottom:-4px;left:70%;width:2px;background:var(--ink);border-radius:2px}
+.gauge-scale{display:grid;grid-template-columns:25fr 25fr 20fr 30fr;margin-top:5px;font-size:11px;line-height:1.3;color:var(--mute)}
+.gauge-scale span{padding-right:4px}
+.gauge-scale span.on{color:var(--brand-ink);font-weight:700}
+.gauge-scale span:last-child{border-left:2px solid var(--ink);padding-left:6px;margin-left:-1px}
+
+#view{padding-top:28px;padding-bottom:72px;outline:none}
+
+/* ── 브리핑(교육) ── */
+.hero{background:var(--brand);color:var(--on-brand);border-radius:16px;padding:30px 32px 28px}
+.hero .eyebrow{font-size:13px;font-weight:500;color:var(--on-brand-soft);letter-spacing:.02em}
+.hero h1{font-size:clamp(26px,5.2vw,36px);font-weight:900;line-height:1.28;margin:10px 0 14px;text-wrap:balance}
+.hero p{font-size:14.5px;line-height:1.7;color:var(--on-brand-mid);max-width:60ch}
+
+.sec{margin-top:40px}
+.sec-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.sec-h h2{font-size:20px;font-weight:900;line-height:1.3}
+.sec-h .aside{font-size:12.5px;color:var(--mute)}
+
+.traits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.trait{background:var(--tint);border-radius:12px;padding:18px 18px 16px;display:flex;flex-direction:column;gap:10px}
+.trait .say{font-size:16px;font-weight:900;line-height:1.35}
+.trait dl{margin:0;display:flex;flex-direction:column;gap:8px;font-size:13px;line-height:1.55}
+.trait dt{font-size:12px;font-weight:700;color:var(--brand-ink)}
+.trait dd{margin:0;color:var(--sub)}
+
+.core{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.core-card{border:2px solid var(--brand-ink);border-radius:12px;padding:18px 20px}
+.core-card .k{font-size:12px;font-weight:700;color:var(--brand-ink)}
+.core-card h3{font-size:18px;font-weight:900;line-height:1.35;margin:4px 0 8px}
+.core-card p{font-size:13.5px;color:var(--sub);line-height:1.6}
+
+.tbl-scroll{overflow-x:auto;margin-top:14px;border-radius:12px;border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;font-size:13px;line-height:1.45;min-width:520px}
+thead th{background:var(--navy);color:var(--on-navy);text-align:left;padding:10px 14px;font-weight:700}
+thead th.ms{background:var(--brand)}
+tbody td{padding:11px 14px;border-top:1px solid var(--line);vertical-align:top}
+tbody td:first-child{font-weight:700}
+tbody td.now{color:var(--sub)}
+tbody td.ms{background:var(--tint);font-weight:700;color:var(--brand-ink)}
+.tbl-note{font-size:12.5px;color:var(--mute);margin-top:10px;line-height:1.6}
+
+.rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.rule{padding:16px 18px;border-top:1px solid var(--line)}
+.rule:nth-child(-n+2){border-top:0}
+.rule:nth-child(odd){border-right:1px solid var(--line)}
+.rule h3{font-size:15px;font-weight:900;line-height:1.4;margin-bottom:4px}
+.rule p{font-size:13px;color:var(--sub);line-height:1.6}
+.ban{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ban span{font-size:12px;font-weight:700;color:var(--red);background:var(--red-tint);border:1px solid var(--red-line);border-radius:999px;padding:2px 10px}
+
+.faces{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.face-item{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.face-item .face{flex-basis:64px;width:64px;height:64px}
+.face-item b{display:block;font-size:14.5px;font-weight:900;line-height:1.3}
+.face-item span{display:block;font-size:12.5px;line-height:1.5;color:var(--sub);margin-top:2px}
+.startbox{margin-top:40px;background:var(--navy);color:var(--on-navy);border-radius:16px;padding:24px 26px}
+.startbox h2{font-size:20px;font-weight:900}
+.startbox .setting{font-size:13.5px;color:var(--on-navy-soft);margin-top:6px;line-height:1.65}
+.modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0 16px}
+.mode{display:block;text-align:left;background:transparent;border:1.5px solid rgba(255,255,255,.28);border-radius:12px;padding:14px 16px;color:var(--on-navy)}
+.mode .m-t{display:block;font-size:15px;font-weight:900}
+.mode .m-d{display:block;font-size:12.5px;line-height:1.55;color:var(--on-navy-soft);margin-top:3px}
+.mode[aria-pressed="true"]{background:#ffffff;border-color:#ffffff;color:#0f1b33}
+.mode[aria-pressed="true"] .m-d{color:#3d4a63}
+.cta{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 26px;border:0;border-radius:999px;background:var(--brand);color:var(--on-brand);font-size:16px;font-weight:900}
+.cta:hover{background:var(--brand-deep)}
+.startbox .cta{background:#ffffff;color:#0f1b33;width:100%}
+.startbox .cta:hover{background:#e6ecff}
+.best-rec{font-size:12.5px;color:var(--on-navy-soft);margin-top:12px;text-align:center;line-height:1.6}
+.best-rec + .best-rec{margin-top:4px}
+
+/* ── 시뮬레이션 ── */
+.round-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.round-n{font-size:13px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums}
+.round-n span{color:var(--mute);font-weight:500}
+.dots{display:flex;gap:4px;margin-left:auto}
+.dots i{width:9px;height:5px;border-radius:3px;background:var(--line)}
+.dots i.done{background:var(--brand-ink)}
+.dots i.now{background:var(--ink)}
+.pill.tech{background:var(--navy);color:var(--on-navy);border-color:var(--navy)}
+.key-flag{font-size:12px;font-weight:700;color:var(--red);border:1px solid var(--red);border-radius:999px;padding:3px 11px}
+
+.turn{display:flex;gap:10px;align-items:flex-start;margin-bottom:14px;scroll-margin-top:calc(env(safe-area-inset-top,0px) + 150px)}
+.turn .who{flex:0 0 38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+.turn.it .who{background:var(--navy);color:var(--on-navy)}
+.face{flex:0 0 76px;width:76px;height:76px;border-radius:50%;line-height:0}
+.face.lg{flex-basis:116px;width:116px;height:116px}
+.face-svg{width:100%;height:100%;display:block;overflow:visible}
+.turn.it{gap:14px}
+.turn.it .col{flex:1;max-width:620px}
+.turn.it .bubble{width:fit-content;max-width:100%}
+.mood{display:inline-block;font-size:11.5px;font-weight:900;border-radius:999px;padding:1px 9px;margin-left:4px;vertical-align:1px}
+.mood.neg{background:var(--red-tint);color:var(--red);border:1px solid var(--red-line)}
+.mood.neu{background:var(--gray-tint);color:var(--mute);border:1px solid var(--line)}
+.mood.pos{background:var(--tint-2);color:var(--brand-ink)}
+.turn.me{flex-direction:row-reverse}
+.turn.me .who{background:var(--brand);color:var(--on-brand)}
+.turn .col{min-width:0;max-width:min(620px,calc(100% - 60px))}
+.turn.me .col{display:flex;flex-direction:column;align-items:flex-end}
+.bubble{border-radius:16px;padding:13px 17px;font-size:15.5px;line-height:1.7}
+.turn.it .bubble{background:var(--tint);border-top-left-radius:4px}
+.turn.me .bubble{background:var(--brand);color:var(--on-brand);border-top-right-radius:4px}
+.name{font-size:12px;font-weight:700;color:var(--mute);margin-bottom:3px}
+.turn.me .name{text-align:right}
+.sys{font-size:13px;font-weight:700;color:var(--red);text-align:center;border:1px dashed var(--red);border-radius:12px;padding:10px;margin:6px 0 14px}
+
+.ask{font-size:13px;font-weight:700;color:var(--mute);margin:22px 0 10px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.ask .hint{font-weight:400;font-size:12px}
+@media (hover:none){.ask .hint{display:none}}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;font-size:14.5px;line-height:1.65;transition:border-color .15s, background .15s}
+.opt:hover{border-color:var(--brand-ink);background:var(--tint)}
+.opt-n{flex:0 0 26px;height:26px;border-radius:50%;border:1.5px solid var(--brand-ink);color:var(--brand-ink);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;margin-top:1px}
+
+.coach{border:1px solid var(--line);border-left:5px solid var(--mute);border-radius:12px;padding:15px 18px;margin:4px 0 0 130px;background:var(--surface)}
+.coach-h{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.badge{font-size:12px;font-weight:900;border-radius:999px;padding:2px 11px}
+.coach .d{font-size:12.5px;font-weight:700;color:var(--mute);font-variant-numeric:tabular-nums}
+.coach p{font-size:14px;line-height:1.7;color:var(--ink)}
+.better{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+.better .bh{font-size:12px;font-weight:700;color:var(--brand-ink);margin-bottom:3px}
+.better p{font-size:13.5px;color:var(--sub)}
+
+.g-best .badge, .badge.g-best{background:var(--brand);color:var(--on-brand)}
+.g-ok .badge, .badge.g-ok{background:var(--tint-2);color:var(--brand-ink)}
+.g-weak .badge, .badge.g-weak{background:var(--gray-tint);color:var(--mute);border:1px solid var(--line)}
+.g-bad .badge, .badge.g-bad{background:var(--red-tint);color:var(--red);border:1px solid var(--red-line)}
+.coach.g-best{border-left-color:var(--brand)}
+.coach.g-ok{border-left-color:var(--brand-ink)}
+.coach.g-weak{border-left-color:var(--mute)}
+.coach.g-bad{border-left-color:var(--red);background:var(--red-tint)}
+
+.next-row{display:flex;justify-content:flex-end;margin-top:22px}
+
+/* ── 결과 ── */
+.verdict{border-radius:16px;padding:28px 30px;color:var(--on-brand);background:var(--brand)}
+.verdict.hold{background:var(--navy)}
+.verdict.reject,.verdict.ended{background:var(--red-tint);color:var(--ink);border:1.5px solid var(--red)}
+.verdict .tag{display:inline-block;font-size:12px;font-weight:900;border-radius:999px;padding:3px 12px;background:#ffffff;color:#0f1b33}
+.verdict.reject .tag,.verdict.ended .tag{background:var(--red);color:#fff}
+:root[data-theme="dark"] .verdict.reject .tag,:root[data-theme="dark"] .verdict.ended .tag{color:#2e1618}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .verdict.reject .tag,:root:not([data-theme="light"]) .verdict.ended .tag{color:#2e1618}}
+.verdict-top{display:flex;gap:22px;align-items:center;margin-bottom:16px}
+.verdict-top .face{flex-basis:132px;width:132px;height:132px}
+.verdict h1{font-size:clamp(24px,4.8vw,32px);font-weight:900;line-height:1.3;margin:12px 0 0}
+.verdict blockquote{margin:0;padding:14px 18px;border-radius:12px;background:rgba(255,255,255,.12);font-size:15px;line-height:1.75}
+.verdict.reject blockquote,.verdict.ended blockquote{background:var(--surface);border:1px solid var(--red-line)}
+.verdict blockquote cite{display:block;font-style:normal;font-size:12px;font-weight:700;opacity:.8;margin-bottom:4px}
+.verdict .note{font-size:14px;line-height:1.7;margin-top:14px;opacity:.95}
+
+.score{display:grid;grid-template-columns:auto 1fr;gap:18px 28px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin-top:14px}
+.score .big{font-size:13px;font-weight:700;color:var(--mute);line-height:1.3}
+.score .big b{display:block;font-size:40px;font-weight:900;color:var(--ink);line-height:1.1;font-variant-numeric:tabular-nums}
+.score .big small{font-size:14px;font-weight:700;color:var(--mute)}
+.sheet{display:flex;flex-wrap:wrap;gap:6px}
+.sheet i{font-style:normal;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+.sheet i.g-best{background:var(--brand);color:var(--on-brand)}
+.sheet i.g-ok{background:var(--tint-2);color:var(--brand-ink)}
+.sheet i.g-weak{background:var(--gray-tint);color:var(--mute);border:1px solid var(--line)}
+.sheet i.g-bad{background:var(--red-tint);color:var(--red);border:1px solid var(--red)}
+.sheet i.g-none{background:transparent;color:var(--line);border:1px dashed var(--line)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--mute);margin-top:8px}
+
+.review{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;background:var(--surface);overflow:hidden}
+.review summary{list-style:none;display:flex;align-items:center;gap:10px;padding:13px 16px;cursor:pointer;font-size:14.5px;font-weight:700;line-height:1.45}
+.review summary::-webkit-details-marker{display:none}
+.review summary .rn{flex:0 0 auto;font-size:12px;font-weight:900;color:var(--mute);font-variant-numeric:tabular-nums;width:20px}
+.review summary .rt{flex:1}
+.review summary::after{content:"";flex:0 0 8px;height:8px;border-right:2px solid var(--mute);border-bottom:2px solid var(--mute);transform:rotate(45deg);margin:-4px 4px 0 2px;transition:transform .15s}
+.review[open] summary::after{transform:rotate(-135deg);margin-top:4px}
+.review .body{padding:2px 16px 16px 46px;font-size:13.5px;line-height:1.7}
+.review .lbl{font-size:12px;font-weight:700;color:var(--mute);margin:12px 0 2px}
+.review .lbl.b{color:var(--brand-ink)}
+.review .q{color:var(--sub)}
+.review .why{color:var(--ink)}
+.review.locked{opacity:.6}
+.review.locked summary{cursor:default}
+.review.locked summary::after{display:none}
+
+.sheet-card{background:var(--tint);border-radius:12px;padding:20px 22px}
+.nb{white-space:nowrap}
+.one-line{font-size:18px;font-weight:900;line-height:1.5;color:var(--ink);text-wrap:balance}
+.cheat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+.cheat .c{border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.cheat .c.wide{grid-column:1 / -1}
+.cheat h3{font-size:14px;font-weight:900;margin-bottom:8px}
+.cheat ul{margin:0;padding-left:18px;font-size:13.5px;line-height:1.7;color:var(--sub)}
+.cheat li+li{margin-top:4px}
+.req{background:var(--navy);color:var(--on-navy);border-radius:12px;padding:18px 22px;margin-top:14px}
+.req h3{font-size:16px;font-weight:900}
+.req p{font-size:13.5px;color:var(--on-navy-soft);line-height:1.7;margin-top:6px}
+.req .items{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.req .items span{font-size:12.5px;font-weight:700;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:3px 11px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+.ghost{min-height:50px;padding:0 24px;border-radius:999px;border:1.5px solid var(--brand-ink);background:transparent;color:var(--brand-ink);font-size:15px;font-weight:700}
+.ghost:hover{background:var(--tint)}
+
+
+/* 시작 상자: 선택 항목 */
+.pick-h{font-size:12px;font-weight:700;color:var(--on-navy-soft);margin:18px 0 8px}
+.startbox .modes{margin:0 0 4px}
+.startbox .cta{margin-top:18px}
+.sub-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.ghost-w{min-height:46px;border-radius:999px;border:1.5px solid rgba(255,255,255,.4);background:transparent;color:#fff;font-size:14.5px;font-weight:700;padding:0 18px}
+.ghost-w:hover{background:rgba(255,255,255,.1)}
+.foot{font-size:12px;color:var(--mute);text-align:center;margin-top:28px}
+.hero.slim{padding:24px 28px}
+.hero.slim h1{font-size:clamp(24px,4.6vw,30px);margin:6px 0 8px}
+.actions.top{margin-top:16px}
+.cert-hint{font-size:13px;color:var(--mute);margin-top:12px}
+.req .ghost-w{margin-top:14px}
+
+/* 수료 화면 */
+.cert-form{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+label{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:700;color:var(--mute)}
+input[type=text],textarea,select{font:inherit;font-size:15px;font-weight:400;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+textarea{resize:vertical;line-height:1.6}
+input:focus,textarea:focus,select:focus{outline:3px solid var(--brand-ink);outline-offset:1px;border-color:var(--brand-ink)}
+.cert{border:2px solid var(--brand-ink);border-radius:16px;padding:24px 26px;background:var(--surface)}
+.cert-top{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;color:var(--brand-ink)}
+.cert-mark{background:var(--brand);color:var(--on-brand);border-radius:999px;padding:3px 14px;font-weight:900}
+.cert-name{font-size:30px;font-weight:900;line-height:1.3;margin:14px 0 16px}
+.cert-name small{display:block;font-size:14px;font-weight:500;color:var(--sub);margin-top:2px}
+.cert-name em{font-style:normal;color:var(--line);font-size:22px}
+.cert-dl{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;border-top:1px solid var(--line);padding-top:14px}
+.cert-dl dt{font-size:12px;font-weight:700;color:var(--mute)}
+.cert-dl dd{margin:0;font-size:14.5px;font-weight:700;font-variant-numeric:tabular-nums}
+
+/* 현장 카드의 양식 */
+.form-box{border:1px solid var(--line);border-radius:12px;padding:20px 22px;background:var(--surface)}
+.form-box h3{font-size:17px;font-weight:900}
+.form-d{font-size:13px;color:var(--sub);margin:4px 0 14px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label.wide{grid-column:1 / -1}
+.out-l{margin-top:14px}
+.out{background:var(--tint);border-color:transparent;font-size:13.5px}
+.form-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+.cta.sm,.ghost.sm{min-height:42px;font-size:14px;padding:0 20px;display:inline-flex;align-items:center;text-decoration:none}
+.form-msg{font-size:12.5px;color:var(--brand-ink);font-weight:700}
+
+/* 말하기 연습 */
+.speak-box{border:2px dashed var(--brand-ink);border-radius:14px;padding:22px 24px;margin-top:18px;text-align:center}
+.speak-box h3{font-size:18px;font-weight:900;line-height:1.4}
+.speak-box p{font-size:13.5px;color:var(--sub);margin:6px auto 16px;max-width:52ch}
+.self{display:flex;gap:10px;flex-wrap:wrap}
+
+/* 검수용 */
+.verify-list{margin:0;padding-left:22px;font-size:13.5px;line-height:1.6}
+.verify-list li{margin-bottom:8px}
+.verify-list li b{display:block}
+.verify-list li span{color:var(--sub)}
+.rv{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px;background:var(--surface)}
+.rv-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:15px}
+.rv-h .rn{font-size:12px;font-weight:900;color:var(--mute)}
+.rv-line{font-size:14px;line-height:1.65;background:var(--tint);border-radius:10px;padding:10px 14px;margin:10px 0}
+.rv em{font-style:normal;font-size:11.5px;font-weight:900;color:var(--mute);margin-right:6px}
+.rv-verify{font-size:13px;line-height:1.6;color:var(--red);background:var(--red-tint);border:1px solid var(--red-line);border-radius:10px;padding:8px 12px;margin-bottom:10px}
+.rv-verify b{margin-right:6px}
+.rv-opt{border-top:1px dashed var(--line);padding:10px 0 4px;font-size:13.5px;line-height:1.65}
+.rv-opt p{margin-top:4px}
+.rv-opt .rv-t{color:var(--ink)}
+.rv-opt .rv-r,.rv-opt .rv-c{color:var(--sub);font-size:13px}
+.rv-opt.g-best .rv-t{font-weight:700}
+
+@media print{
+  .top,.actions,.foot{display:none !important}
+  body{font-size:11pt}
+  .rv{break-inside:avoid}
+  .hero{color:#000;background:#fff;border:2px solid #000}
+  .hero p,.hero .eyebrow{color:#000}
+}
+
+/* 등장 모션: 사용자의 선택에 대한 응답에만 사용 */
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.pop{animation:pop .28s ease-out both}
+.pop.d1{animation-delay:.35s}
+.pop.d2{animation-delay:.8s}
+.pop.d3{animation-delay:1.05s}
+@keyframes shake{0%,100%{transform:none}15%{transform:translateX(-4px) rotate(-2deg)}30%{transform:translateX(4px) rotate(2deg)}45%{transform:translateX(-3px) rotate(-1.5deg)}60%{transform:translateX(3px) rotate(1.5deg)}80%{transform:translateX(-1px)}}
+.shake{animation:shake .6s ease-in-out .7s both}
+@media (prefers-reduced-motion: reduce){
+  .pop,.shake{animation:none}
+  .gauge-fill{transition:none}
+}
+
+@media (max-width:720px){
+  body{font-size:15px}
+  .wrap{padding:0 16px}
+  .hero{padding:24px 22px}
+  .traits,.core,.cheat,.modes{grid-template-columns:1fr}
+  .rules{grid-template-columns:1fr}
+  .rule:nth-child(-n+2){border-top:1px solid var(--line)}
+  .rule:first-child{border-top:0}
+  .rule:nth-child(odd){border-right:0}
+  .pill{display:none}
+  .bar{height:50px}
+  .tbl-scroll{overflow:visible;border:0;border-radius:0}
+  table{min-width:0;display:block}
+  thead{display:none}
+  tbody{display:flex;flex-direction:column;gap:10px}
+  tbody tr{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  tbody td{border-top:0;padding:10px 12px}
+  tbody td:first-child{grid-column:1 / -1;background:var(--navy);color:var(--on-navy);padding:8px 12px}
+  tbody td.now::before,tbody td.ms::before{display:block;font-size:11px;font-weight:700;margin-bottom:2px;color:var(--mute)}
+  tbody td.now::before{content:"지금"}
+  tbody td.ms::before{content:"도입 후";color:var(--brand-ink)}
+  .dots{margin-left:0;flex:1 0 100%}
+  .dots i{flex:1}
+  .bubble{font-size:15px}
+  .turn .col{max-width:calc(100% - 48px)}
+  .coach{margin-left:0}
+  .face{flex-basis:58px;width:58px;height:58px}
+  .face.lg{flex-basis:92px;width:92px;height:92px}
+  .turn.it{gap:10px}
+  .turn.it .col{max-width:none}
+  .faces{grid-template-columns:1fr 1fr;gap:8px}
+  .face-item{flex-direction:column;text-align:center;gap:6px;padding:12px 8px}
+  .verdict-top{flex-direction:column;align-items:flex-start;gap:12px}
+  .verdict-top .face{flex-basis:auto;width:104px;height:104px}
+  .cert-form,.form-grid,.cert-dl{grid-template-columns:1fr}
+  .cert{padding:20px}
+  .cert-name{font-size:26px}
+  .form-box{padding:18px 16px}
+  .hero.slim{padding:22px 20px}
+  .self .cta,.self .ghost{flex:1 1 100%}
+  .actions .cta,.actions .ghost{flex:1 1 100%}
+  .link-btn{font-size:12.5px}
+  .score{grid-template-columns:1fr}
+  .review .body{padding-left:16px}
+  .next-row .cta{width:100%}
+  .gauge-scale{font-size:10.5px}
+  .startbox{padding:22px 20px}
+  .verdict{padding:24px 22px}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap">
+    <div class="bar">
+      <span class="logo"><img src="data:image/png;base64,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" alt="메디세이프"></span>
+      <span class="pill">현장 시뮬레이션 · 전산실 편</span>
+      <span class="spacer"></span>
+      <button class="link-btn" id="cardBtn">현장 카드</button>
+      <button class="link-btn" id="homeBtn" hidden>처음으로</button>
+    </div>
+    <div class="gauge" id="gauge" hidden role="group" aria-label="전산팀장 수용도">
+      <div class="gauge-top">
+        <span class="gauge-label">전산팀장 수용도</span>
+        <span class="gauge-quote" id="gQuote"></span>
+        <span class="gauge-delta" id="gDelta" aria-hidden="true"></span>
+        <span class="gauge-num"><b id="gNum">0</b> / 100</span>
+      </div>
+      <div class="gauge-track" aria-hidden="true">
+        <div class="gauge-fill" id="gFill"></div>
+        <div class="gauge-target"></div>
+      </div>
+      <div class="gauge-scale" id="gScale" aria-hidden="true"></div>
+    </div>
+  </div>
+</div>
+
+<main class="wrap" id="view" tabindex="-1"></main>
+
+<script>
+/* 전산팀장 표정 일러스트 (인라인 SVG, 외부 이미지 없음)
+   faceSVG(expr, opts) → SVG 문자열.  expr: FACES의 키 */
+
+const FACES = {
+  furious:   { label: `아주 짜증`,  when: `과장하거나, 있는 시스템을 깎아내렸을 때` },
+  annoyed:   { label: `언짢음`,     when: `기분을 상하게 하는 답을 했을 때` },
+  bored:     { label: `시큰둥`,     when: `다음 단계 없이 물러났을 때` },
+  cold:      { label: `냉담`,       when: `면담 초반, 마음이 닫혀 있을 때` },
+  skeptical: { label: `의심`,       when: `말은 맞지만 아직 못 믿을 때` },
+  realize:   { label: `뜨끔`,       when: `질문을 받고 빈틈을 스스로 깨달았을 때` },
+  curious:   { label: `궁금`,       when: `처음 듣는 얘기에 관심이 생겼을 때` },
+  pleased:   { label: `만족`,       when: `정확한 답으로 신뢰가 쌓였을 때` },
+  delighted: { label: `흡족`,       when: `설득되어 같은 편이 되었을 때` },
+};
+
+let __faceSeq = 0;
+function faceSVG(expr, opts){
+  opts = opts || {};
+  if(!FACES[expr]) expr = 'cold';
+  const id = 'fc' + (++__faceSeq);
+  const INK = '#1c2233', SKIN = '#f3cba8', SKIN2 = '#e6b48d', LIP = '#5a2a22';
+  const bg = ({ furious:'#fbd3cd', annoyed:'#fde4df', bored:'#e9edf5', cold:'#e4e9f3', skeptical:'#e9edf5',
+                realize:'#e9f0ff', curious:'#dfe9ff', pleased:'#d9e6ff', delighted:'#cfe0ff' })[expr];
+  const tilt = ({ curious:-6, skeptical:4, bored:5, realize:-3, delighted:-3 })[expr] || 0;
+
+  const brow = (d, w) => `<path d="${d}" fill="none" stroke="${INK}" stroke-width="${w||5}" stroke-linecap="round"/>`;
+  const pupil = (cx, cy, rx, ry, hl) => `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${INK}"/>` + (hl ? `<circle cx="${cx+1.8}" cy="${cy-2.2}" r="${hl}" fill="#fff"/>` : ``);
+  const halfLid = (cx, cy, r) => `<path d="M${cx-r} ${cy} h${2*r} a${r} ${r} 0 0 1 ${-2*r} 0z" fill="${INK}"/><path d="M${cx-r-3} ${cy} h${2*r+6}" stroke="${INK}" stroke-width="2.6" stroke-linecap="round"/>`;
+  const arcEye = (cx, cy) => `<path d="M${cx-8} ${cy+3} q8 -11 16 0" fill="none" stroke="${INK}" stroke-width="3.8" stroke-linecap="round"/>`;
+  const mouthLine = (d) => `<path d="${d}" fill="none" stroke="${LIP}" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const L = 78, R = 122, EY = 92;
+
+  let brows = '', eyes = '', mouth = '', under = '', extra = '';
+  switch(expr){
+    case 'cold':
+      brows = brow('M64 75 L92 79') + brow('M108 79 L136 75');
+      eyes = halfLid(L, EY-1, 6.5) + halfLid(R, EY-1, 6.5);
+      mouth = mouthLine('M88 126 Q100 121 112 126');
+      break;
+    case 'skeptical':
+      brows = brow('M64 78 L92 80') + brow('M108 71 Q122 60 136 68');
+      eyes = halfLid(L+2, EY-1, 6) + pupil(R+3, EY, 4.6, 5.6, 1.5);
+      mouth = mouthLine('M89 127 Q100 124 113 123');
+      break;
+    case 'curious':
+      brows = brow('M64 72 Q78 61 92 69') + brow('M108 69 Q122 61 136 72');
+      eyes = pupil(L, EY, 6.2, 7, 2.1) + pupil(R, EY, 6.2, 7, 2.1);
+      mouth = `<ellipse cx="100" cy="126" rx="5.5" ry="6.5" fill="${LIP}"/>`;
+      extra = `<text x="150" y="58" font-size="46" font-weight="900" font-family="'Noto Sans KR',sans-serif" fill="#1b3f9e" transform="rotate(12 160 44)">?</text>`;
+      break;
+    case 'pleased':
+      brows = brow('M65 74 Q78 67 91 74') + brow('M109 74 Q122 67 135 74');
+      eyes = arcEye(L, EY) + arcEye(R, EY);
+      mouth = mouthLine('M85 119 Q100 135 115 119');
+      under = `<ellipse cx="68" cy="111" rx="8" ry="5" fill="#ef8f8f" opacity=".45"/><ellipse cx="132" cy="111" rx="8" ry="5" fill="#ef8f8f" opacity=".45"/>`;
+      break;
+    case 'delighted':
+      brows = brow('M65 71 Q78 63 91 71') + brow('M109 71 Q122 63 135 71');
+      eyes = arcEye(L, EY) + arcEye(R, EY);
+      mouth = `<path d="M82 116 Q100 144 118 116 Z" fill="${LIP}"/><path d="M86 118.5 Q100 124 114 118.5 L116 116 L84 116Z" fill="#fff"/>`;
+      under = `<ellipse cx="68" cy="111" rx="8.5" ry="5.5" fill="#ef8f8f" opacity=".5"/><ellipse cx="132" cy="111" rx="8.5" ry="5.5" fill="#ef8f8f" opacity=".5"/>`;
+      extra = star(36, 58, 9) + star(164, 40, 12) + star(176, 78, 6);
+      break;
+    case 'bored':
+      brows = brow('M64 77 L92 77') + brow('M108 77 L136 77');
+      eyes = halfLid(L-3, EY, 6) + halfLid(R-3, EY, 6);
+      mouth = mouthLine('M92 126 h16');
+      extra = `<g fill="#6b7896"><circle cx="150" cy="46" r="4.2"/><circle cx="163" cy="46" r="4.2"/><circle cx="176" cy="46" r="4.2"/></g>`;
+      break;
+    case 'annoyed':
+      brows = brow('M64 70 L92 80', 5.5) + brow('M108 80 L136 70', 5.5);
+      eyes = halfLid(L, EY, 5.5) + halfLid(R, EY, 5.5);
+      mouth = mouthLine('M86 129 Q100 117 114 129');
+      break;
+    case 'furious':
+      brows = brow('M61 64 L94 81', 7) + brow('M106 81 L139 64', 7);
+      eyes = pupil(L+1, EY+1, 3.3, 3.8) + pupil(R-1, EY+1, 3.3, 3.8)
+           + `<path d="M${L-10} ${EY-7} L${L+10} ${EY-1}" stroke="${INK}" stroke-width="3" stroke-linecap="round"/><path d="M${R+10} ${EY-7} L${R-10} ${EY-1}" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>`;
+      mouth = `<path d="M84 121 Q100 113 116 121 L115 131 Q100 125 85 131Z" fill="#fff" stroke="${LIP}" stroke-width="3.2" stroke-linejoin="round"/><path d="M92 118.5 v10 M100 117 v9.5 M108 118.5 v10" stroke="${LIP}" stroke-width="2"/>`;
+      under = `<path d="M58 88 C58 56 78 42 100 42 C122 42 142 56 142 88 C142 118 124 141 100 141 C76 141 58 118 58 88Z" fill="#e5484d" opacity=".24"/>`;
+      extra = `<g fill="none" stroke="#d93025" stroke-width="4.5" stroke-linecap="round"><path d="M143 40 Q150 40 150 33"/><path d="M158 33 Q158 40 165 40"/><path d="M143 48 Q150 48 150 55"/><path d="M158 55 Q158 48 165 48"/></g>`
+            + `<g fill="none" stroke="#d93025" stroke-width="3.5" stroke-linecap="round" opacity=".8"><path d="M30 62 q-5 -8 1 -14"/><path d="M42 54 q-4 -7 1 -12"/></g>`;
+      break;
+    case 'realize':
+      brows = brow('M64 72 Q78 65 92 71') + brow('M108 73 Q122 68 136 76');
+      eyes = pupil(L-2, EY+2.5, 4.6, 5.4, 1.4) + pupil(R-2, EY+2.5, 4.6, 5.4, 1.4);
+      mouth = mouthLine('M93 127 q7 -3.5 14 0');
+      extra = `<path d="M152 62 q7 11 0 16 q-7 -5 0 -16z" fill="#7fb6ff" stroke="#4a8fe8" stroke-width="1.5"/>`;
+      break;
+  }
+
+  function star(cx, cy, r){
+    const k = r * 0.28;
+    return `<path d="M${cx} ${cy-r} Q${cx+k} ${cy-k} ${cx+r} ${cy} Q${cx+k} ${cy+k} ${cx} ${cy+r} Q${cx-k} ${cy+k} ${cx-r} ${cy} Q${cx-k} ${cy-k} ${cx} ${cy-r}Z" fill="#f2b705"/>`;
+  }
+
+  const thumb = expr === 'delighted' ? `
+    <g>
+      <rect x="143" y="168" width="34" height="40" rx="6" fill="#2f3f63"/>
+      <rect x="146" y="121" width="15" height="34" rx="7.5" fill="${SKIN}" stroke="${SKIN2}" stroke-width="1.5"/>
+      <rect x="141" y="144" width="38" height="30" rx="10" fill="${SKIN}" stroke="${SKIN2}" stroke-width="1.5"/>
+      <path d="M160 152 h16 M160 159 h17 M160 166 h16" stroke="${SKIN2}" stroke-width="2" stroke-linecap="round"/>
+    </g>` : ``;
+
+  const label = FACES[expr].label;
+  return `<svg class="face-svg" viewBox="0 0 200 200" role="img" aria-label="전산팀장 표정: ${label}" xmlns="http://www.w3.org/2000/svg">
+  <defs><clipPath id="${id}"><circle cx="100" cy="100" r="98"/></clipPath></defs>
+  <circle cx="100" cy="100" r="98" fill="${bg}"/>
+  <g clip-path="url(#${id})">
+    <path d="M20 214 C22 170 50 152 80 147 L120 147 C150 152 178 170 180 214Z" fill="#2f3f63"/>
+    <path d="M80 147 L100 174 L120 147 L113 139 L87 139Z" fill="#e8eefc"/>
+    <path d="M80 147 L100 174 L92 182 L72 152Z" fill="#26344f"/><path d="M120 147 L100 174 L108 182 L128 152Z" fill="#26344f"/>
+    <path d="M85 150 L98 188 M115 150 L102 188" stroke="#1b3f9e" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <rect x="87" y="185" width="26" height="20" rx="3" fill="#ffffff" stroke="#c4cfe6" stroke-width="1.5"/>
+    <rect x="92" y="190" width="9" height="9" rx="1.5" fill="#c9d6f2"/><path d="M104 192 h6 M104 197 h6" stroke="#c4cfe6" stroke-width="1.6"/>
+    <path d="M86 126 h28 v20 c-6 9 -22 9 -28 0z" fill="${SKIN2}"/>
+    <g transform="rotate(${tilt} 100 140)">
+      <ellipse cx="57" cy="97" rx="7" ry="10.5" fill="${SKIN2}"/><ellipse cx="143" cy="97" rx="7" ry="10.5" fill="${SKIN2}"/>
+      <path d="M58 88 C58 56 78 42 100 42 C122 42 142 56 142 88 C142 118 124 141 100 141 C76 141 58 118 58 88Z" fill="${SKIN}"/>
+      ${under}
+      <path d="M55 88 C50 52 76 32 103 33 C131 34 150 54 145 88 C142 72 136 63 126 58 C109 67 84 67 69 57 C61 64 57 74 55 88Z" fill="${INK}"/>
+      <path d="M100 101 q-4.5 10 -.5 12.5 q3.5 1.4 6 .2" fill="none" stroke="#d29c74" stroke-width="2.6" stroke-linecap="round"/>
+      ${eyes}
+      <g fill="rgba(255,255,255,.22)" stroke="${INK}" stroke-width="3.6">
+        <rect x="61" y="79" width="34" height="26" rx="8"/><rect x="105" y="79" width="34" height="26" rx="8"/>
+      </g>
+      <path d="M95 90 q5 -4 10 0 M61 88 l-5 -2 M139 88 l5 -2" fill="none" stroke="${INK}" stroke-width="3.2" stroke-linecap="round"/>
+      ${brows}
+      ${mouth}
+    </g>
+    ${thumb}
+  </g>
+  ${extra}
+</svg>`;
+}
+
+</script>
+<script>
+/* 시뮬레이션 콘텐츠 (25문항: 반대·회사/계약 질문 19 + 기술 질문 6)
+   근거: 히포메디세이프 제품소개(0918) 대본·부록 A4~A7, 브로셔 앞·뒷면
+   grade: best(정확) / ok(무난) / weak(아쉬움) / bad·vbad(위험)
+   선택지 길이는 정답을 길이로 추측할 수 없도록 서로 비슷하게 맞춤 */
+
+const START = 20;        // 시작 수용도
+const TARGET = 70;       // 수락 기준
+const HOLD = 40;         // 보류 기준
+const MULT = { best: 1, ok: 0.35, weak: 0, bad: -1, vbad: -1.7 };   // 문항 1개의 기본 점수(unit)에 곱하는 값
+const KEY_WEIGHT = 2;    // 승부처 문항의 '정확'은 두 배
+
+const ROUNDS = [
+  {
+    theme: `새로운 건 싫다`,
+    id: `open`, title: `새로 도입할 여력 없습니다`,
+    line: `또 뭘 새로 넣으라는 얘기죠? 저희 둘이서 있는 시스템 돌리기도 벅찹니다. 새로 도입할 여력 없어요.`,
+    options: [
+      { grade: `best`,
+        text: `두 분이서 다 챙기시려면 벅차실 겁니다. 오늘은 관리할 걸 하나 더 얹는 얘기가 아니라, 지금 팀장님이 지고 계신 백업·복구 부담을 덜어내는 얘기입니다. 질문 하나만 드려도 되겠습니까?`,
+        react: `…덜어낸다고요. 질문이 뭔데요.`,
+        coach: `변화를 싫어하는 이유는 일이 늘고 책임이 늘기 때문입니다. 첫마디에서 '더하는 것'이 아니라 '덜어내는 것'으로 틀을 바꿨고, 설명을 시작하는 대신 질문할 허락을 받았습니다.` },
+      { grade: `ok`,
+        text: `새로 바꾸실 건 없습니다. 지금 쓰시는 EMR·PACS는 그대로 두고 따로 도는 백업·복구 구독 서비스라서, 전산실에서 손대실 부분이 많지 않습니다.`,
+        react: `다들 처음엔 그렇게 말하죠. 일단 들어는 봅시다.`,
+        coach: `내용은 맞습니다. 다만 상대의 부담을 먼저 인정하지 않고 곧바로 제품 설명으로 들어가면 '또 영업'으로 들립니다. 공감하고, 질문할 허락을 받는 순서가 더 강합니다.` },
+      { grade: `bad`,
+        text: `원장님께서 먼저 관심을 보이셔서 찾아뵀습니다. 전산실 검토만 통과되면 바로 진행할 수 있으니, 팀장님께서는 기술적으로 문제없는지 확인만 해주시면 됩니다.`,
+        react: `그럼 원장님이랑 하시면 되겠네요. 저는 검토 의견에 '불가'라고 쓰면 되고요.`,
+        coach: `윗선을 앞세우면 전산팀장은 방어로 돌아섭니다. 전산실은 통과 절차가 아닙니다. 설득되면 병원 안에서 가장 든든한 우군이 되는 결정권자입니다.` },
+      { grade: `vbad`,
+        text: `요즘 랜섬웨어 피해가 심각한 건 아시죠? 메디세이프 하나면 보안 걱정은 끝납니다. 병원 보안 전 영역을 커버하는 솔루션이고, 개인정보보호법도 강화됐으니 이번 기회에 꼭 검토하셔야 합니다. 안 하시면 나중에 곤란해지실 수 있습니다.`,
+        react: `보안 솔루션이요? 저희 방화벽, 백신 다 있습니다. 더 들을 것 없겠네요.`,
+        coach: `메디세이프는 보안 솔루션이 아닙니다. '보안 전 영역 커버'는 사실과 다른 표현이라 쓰지 않습니다. 보안으로 소개하는 순간, 이미 있는 방화벽·백신과 겹치는 물건이 되어 대화가 끝납니다.` },
+    ],
+  },
+  {
+    theme: `새로운 건 싫다`,
+    id: `never`, title: `저희는 한 번도 안 걸렸습니다`,
+    line: `백업·복구요? 결국 랜섬웨어 얘기 하시려는 거죠. 저희는 지금까지 한 번도 안 걸렸습니다. 이런 규모 병원을 누가 노립니까.`,
+    options: [
+      { grade: `best`,
+        text: `지금까지 사고가 없었던 건 팀장님이 잘 관리해 오신 덕분입니다. 다만 2025년 국정감사 자료를 보면 의료정보 침해사고의 90%가 랜섬웨어였고, 보안관제에 가입한 종합병원은 7.4%뿐입니다. 더 막으시라는 게 아니라, 뚫린 다음을 준비해 두자는 말씀입니다.`,
+        react: `7.4%요. 저희도 관제는 안 들어가 있긴 합니다.`,
+        coach: `지금까지의 관리를 먼저 인정한 뒤, 의견이 아니라 공개된 숫자로 답했습니다. 겁을 주는 대신 '더 막으라는 얘기가 아니다'로 마무리해 방어심을 낮췄습니다. 표적이 대학병원에서 보안관제 밖의 병원으로 옮겨오고 있다는 흐름을 덧붙여도 좋습니다.` },
+      { grade: `ok`,
+        text: `2026년 1월에 전남대병원과 강원대병원이 하루 간격으로 뚫렸습니다. 전담 전산실에 백신, 방화벽까지 갖춘 대학병원도 막지 못했고 영상 시스템이 이틀간 멈췄습니다. 해커는 비트코인 수억 원을 요구했습니다. 규모가 작다고 해서 안심하실 수는 없습니다.`,
+        face: `cold`,
+        react: `대학병원이야 노릴 게 많으니까 그렇죠. 저희랑은 사정이 다릅니다.`,
+        coach: `사실은 맞습니다. 다만 대학병원 사례만으로는 '우리는 다르다'는 반응이 나옵니다. 종합병원 보안관제 가입률 7.4%처럼, 상대 병원 규모에 해당하는 숫자를 함께 써야 합니다.` },
+      { grade: `vbad`,
+        text: `지금까지 안 걸리신 건 솔직히 운이 좋으셨던 겁니다. 요즘 추세면 이 정도 규모 병원은 조만간 반드시 한 번은 당하십니다. 그때 가서 후회하시면 이미 늦고, 그 전에 준비하셔야 합니다.`,
+        react: `운이요? 제가 몇 년을 관리해 온 걸 운이라고 하십니까. 그리고 '반드시'는 무슨 근거입니까.`,
+        coach: `상대의 관리를 '운'으로 깎아내렸고, 근거 없는 단정으로 겁을 줬습니다. 전산팀장에게 공포를 앞세운 영업은 통하지 않습니다. 공개된 숫자로만 말하십시오.` },
+      { grade: `bad`,
+        text: `독일에서는 랜섬웨어로 병원 전산이 멈춰 환자가 사망한 사례까지 나왔습니다. 이 병원에서 그런 일이 생기면 팀장님이 감당하실 수 있겠습니까? 그 책임을 생각하시면 비용은 문제가 아닙니다.`,
+        react: `지금 저를 협박하시는 겁니까? 그런 식이면 더 들을 필요 없겠네요.`,
+        coach: `사례 자체는 사실이지만, 상대에게 책임을 들이대는 방식으로 쓰면 협박으로 들립니다. 위기감은 상대를 몰아붙여서가 아니라 숫자와 흐름으로 전합니다.` },
+    ],
+  },
+  {
+    theme: `새로운 건 싫다`,
+    id: `emr`, title: `EMR·PACS 건드리면 안 됩니다`,
+    line: `EMR이나 PACS 건드리는 거면 말도 꺼내지 마세요. 업체 불러서 연동하다 장애 나면 수습은 전부 제 몫입니다.`,
+    options: [
+      { grade: `best`,
+        text: `EMR·PACS 프로그램은 교체도 변경도 없이 그대로 쓰십니다. 메디세이프는 그 옆에서 따로 도는 별도 서비스입니다. 다만 데이터를 가져가는 연결 방식은 병원 전산 환경을 보고 정해야 해서, 제품설명회에서 히포크랏랩스 기술진이 팀장님과 직접 협의합니다.`,
+        react: `적어도 아는 척은 안 하시네요. 연결 방식은 제가 직접 물어보죠.`,
+        coach: `직접 말할 수 있는 것(프로그램 변경 없음)과 기술진에게 넘길 것(연결 방식)을 구분했습니다. 전산 전문가 앞에서는 정확히 아는 만큼만 말하는 것이 신뢰를 만듭니다.` },
+      { grade: `bad`,
+        text: `연동이 전혀 없습니다. 기존 시스템과는 완전히 별개로 돌아가서 장비 하나 연결하면 끝입니다. EMR 업체를 부를 일도 없고, 그 과정에서 장애가 날 일 자체가 없으니 안심하셔도 됩니다.`,
+        react: `데이터를 가져가는데 연동이 전혀 없다고요? 그게 기술적으로 말이 됩니까.`,
+        coach: `'연동 전혀 없음'은 금지 표현입니다. EMR·PACS 프로그램을 바꾸지 않는 것은 맞지만, 백업할 데이터를 가져오는 연결은 필요합니다. 전산팀장은 이런 과장을 바로 알아챕니다.` },
+      { grade: `bad`,
+        text: `에이전트가 DB를 실시간으로 복제하는 구조인데 서버 부하는 1%도 안 됩니다. 백업은 야간에만 돌기 때문에 진료 시간에는 영향이 없고, 회선도 기존 인터넷 회선을 그대로 쓰면 됩니다. 지금까지 장애 사례도 한 건 없었으니 걱정 안 하셔도 됩니다.`,
+        face: `skeptical`,
+        react: `1%는 어떤 환경에서 잰 수치죠? 저희 DB 버전은 확인하셨고요?`,
+        coach: `확인되지 않은 기술 수치를 만들어 말하면 바로 다음 질문에서 무너집니다. 기술 설명은 영업사원의 몫이 아닙니다. 제품설명회로 연결하는 것이 정답입니다.` },
+      { grade: `weak`,
+        text: `그 부분은 제가 기술 쪽을 잘 몰라서 정확히 말씀드리기가 어렵습니다. 괜히 잘못 말씀드리면 안 되니까 자료를 두고 가겠습니다. 읽어보시고 궁금한 점이 있으시면 편하게 연락 주십시오.`,
+        react: `네, 거기 두고 가세요.`,
+        coach: `모르는 것을 모른다고 한 것은 좋습니다. 하지만 물러나기만 하면 대화가 끝납니다. '프로그램 변경은 없다'는 확정 사실은 직접 말하고, 나머지는 제품설명회로 연결해야 합니다.` },
+    ],
+  },
+  {
+    theme: `기술 질문`, tech: true, ask: (g) => g >= 50 ? `curious` : `skeptical`,
+    id: `t-line`, title: `그 많은 데이터를 회선으로 올립니까`,
+    line: `데이터를 가져간다고 하셨는데, 저희 데이터가 수십 테라입니다. 그걸 회선으로 올린다고요? 밤에는 PACS 전송도 도는데, 회선을 다 잡아먹는 거 아닙니까.`,
+    options: [
+      { grade: `best`,
+        text: `정확한 걱정이십니다. 그래서 병원 전산 환경을 먼저 실사해서 회선 속도, 데이터 용량, 야간 작업 시간대를 확인하고, 거기에 맞춰 초기 전송과 백업 시간대를 정합니다. 설계는 히포크랏랩스 기술진 몫이라, 회선 속도와 야간 작업 시간을 알려주시면 설명회 전에 전달해 두겠습니다.`,
+        react: `미리 전달해 둔다… 그럼 설명회 때 제 환경 기준으로 답을 들을 수 있겠네요.`,
+        coach: `기술 질문을 피하지도, 지어내지도 않았습니다. '환경을 먼저 확인한다'는 확정된 절차만 말하고, 질문을 받아 적어 기술진에게 미리 전달하겠다고 했습니다. 질문을 넘기는 것과 질문을 챙기는 것은 다릅니다.` },
+      { grade: `vbad`,
+        text: `그 부분은 걱정 안 하셔도 됩니다. 중복 제거와 압축을 거치면 실제 전송량은 10분의 1로 줄어들고, 처음 전체 백업은 저희가 디스크에 담아서 직접 실어 나릅니다. 그 뒤로는 하루 변경분만 올라가기 때문에 100메가 회선으로도 충분하고, PACS 전송과 겹쳐도 문제가 없습니다.`,
+        face: `annoyed`,
+        react: `10분의 1은 어떤 데이터 기준입니까? 의료 영상은 이미 압축돼 있어서 그렇게 안 줄어드는데요.`,
+        coach: `확인되지 않은 기술 수치와 방식을 지어냈습니다. 전산팀장은 자기 데이터를 누구보다 잘 압니다. 한 번 들통난 숫자는 그 뒤의 모든 말을 의심하게 만듭니다.` },
+      { grade: `bad`,
+        text: `백업은 진료가 끝난 야간에만 돌기 때문에 병원 업무에는 영향이 없습니다. 다른 병원들도 다 그렇게 쓰고 있고, 회선 문제로 불편하다는 얘기는 지금까지 한 번도 들어본 적이 없습니다.`,
+        react: `방금 밤에 PACS 전송이 돈다고 말씀드렸는데요. 제 말을 안 들으신 것 같네요.`,
+        coach: `상대가 방금 말한 조건(야간 PACS 전송)을 흘려들었고, 확정되지 않은 '다른 병원' 이야기까지 꺼냈습니다. 기술 질문에서는 상대의 말을 그대로 받아 적는 것이 첫 번째입니다.` },
+      { grade: `weak`,
+        text: `회선이나 전송 방식은 제가 답변드릴 수 있는 영역이 아닙니다. 기술적인 내용은 전부 제품설명회에서 히포크랏랩스 기술진이 설명드릴 예정이니, 그때 같은 질문을 다시 한번 해 주시면 됩니다.`,
+        react: `같은 질문을 또 하라고요. 알겠습니다.`,
+        coach: `설명회로 넘긴 방향은 맞습니다. 하지만 질문을 상대에게 되돌려 보냈습니다. 회선 속도와 야간 작업 시간을 받아 적어 기술진에게 미리 전달하겠다고 하면, 같은 연결이 '떠넘기기'에서 '챙기기'로 바뀝니다.` },
+    ],
+  },
+  {
+    theme: `보안은 이미 한다`,
+    id: `sec`, title: `보안은 이미 하고 있습니다`,
+    line: `방화벽, 백신, 다 돌리고 있습니다. 보안은 저희가 이미 하고 있어요.`,
+    options: [
+      { grade: `best`,
+        text: `네, 그대로 쓰시면 됩니다. 방화벽과 백신은 막는 것이고, 메디세이프는 보안 솔루션이 아니라 뚫린 다음에 되살리는 백업·복구입니다. 2026년 1월 전남대·강원대병원도 방화벽과 백신을 다 갖추고도 뚫렸습니다. 저희는 그 다음 단계입니다.`,
+        react: `보안 제품이 아니라고요. 그럼 얘기가 좀 다르네요.`,
+        coach: `이미 한 보안 투자를 인정하고, 메디세이프를 경쟁 제품이 아닌 '다음 단계'로 놓았습니다. '막는 것에서 되살리는 것으로'가 제품 설명의 중심입니다.` },
+      { grade: `ok`,
+        text: `방화벽이 출입문이라면 메디세이프는 금고입니다. 해커가 문으로만 들어오는 건 아니니까요. 문과 금고는 역할이 달라서 하나를 고르는 게 아니라 함께 갖추시는 구조이고, 지금 쓰시는 건 그대로 두시면 됩니다.`,
+        face: `curious`,
+        react: `비유는 알겠는데, 그래서 정확히 뭘 하는 제품입니까?`,
+        coach: `좋은 비유입니다. 다만 전산팀장에게는 비유 뒤에 '보안이 아니라 백업·복구'라는 정의를 한 문장으로 붙여야 합니다.` },
+      { grade: `vbad`,
+        text: `방화벽만으로는 요즘 공격을 못 막습니다. 쓰시는 제품이 몇 년 된 거죠? 최신 랜섬웨어는 그런 장비를 다 우회합니다. 대학병원도 뚫린 마당에 이 정도 규모 병원의 장비로는 어렵습니다. 메디세이프로 보완하지 않으시면 사실상 무방비 상태라고 보셔야 합니다.`,
+        react: `제가 구축한 걸 무방비라고 하시는 겁니까? 저희 방화벽 로그 한 번이라도 보고 하시는 말씀이에요?`,
+        coach: `상대가 직접 고르고 운영해 온 시스템을 깎아내리면 설득은 끝납니다. 메디세이프는 방화벽의 부족함을 메우는 제품이 아니라, 역할이 다른 제품입니다.` },
+      { grade: `vbad`,
+        text: `메디세이프는 방화벽이 놓치는 부분까지 잡아냅니다. 침입 탐지부터 차단, 복구까지 한 번에 되니까 앞으로는 보안 장비를 따로따로 관리하실 필요가 없어지고, 관리 부담도 그만큼 줄어듭니다.`,
+        face: `skeptical`,
+        react: `침입 탐지요? 그럼 탐지 규칙은 누가 관리합니까? 스펙 문서부터 주세요.`,
+        coach: `메디세이프에는 침입 탐지·차단 기능이 없습니다. 없는 기능을 말하면 제품설명회에서 바로 드러나고, 그때는 제품이 아니라 대웅제약의 신뢰가 깎입니다.` },
+    ],
+  },
+  {
+    theme: `백업도 한다`,
+    id: `nas`, title: `NAS로 백업하고 있습니다`,
+    verify: `'NAS는 그대로 두고 병원 밖에 한 벌 더'라는 메시지가 영업 방침과 맞는지`,
+    line: `백업도 하고 있습니다. NAS로 매일 밤 돌리고, 지금까지 문제없이 잘 써왔어요.`,
+    options: [
+      { grade: `best`,
+        text: `잘 하고 계신 겁니다. 그럼 하나만 여쭙겠습니다. 그 NAS는 진료 서버와 같은 네트워크에 있습니까?`,
+        face: `realize`,
+        react: `…같은 망이죠. 서버실에 같이 있고요. 그래야 백업이 도니까.`,
+        coach: `문제는 백업이 '있느냐'가 아니라 '어디에 있느냐'입니다. 같은 네트워크의 백업은 같은 방에 있는 금고라서, 랜섬웨어가 들어오면 원본과 함께 잠깁니다. 설명하지 않고 질문해서 팀장 스스로 답하게 했습니다.` },
+      { grade: `ok`,
+        text: `같은 네트워크 안에 있는 백업은 랜섬웨어가 들어오면 원본과 함께 잠길 수 있습니다. 메디세이프는 병원 망과 끊어진 바깥 여러 곳에 나눠 보관해서, 병원이 통째로 잠겨도 복구본이 남습니다.`,
+        react: `이론적으로는 그렇죠. 저희는 아직 그런 적 없습니다만.`,
+        coach: `내용은 정확합니다. 다만 먼저 설명해 버리면 상대는 반박할 거리를 찾습니다. "백업본, 어디에 두셨습니까?"라고 물으면 같은 결론을 팀장이 직접 말하게 됩니다.` },
+      { grade: `vbad`,
+        text: `NAS 백업은 랜섬웨어 앞에서는 사실상 의미가 없습니다. 걸리면 백업까지 한 번에 다 날아가는데, 그건 백업이라고 부르기도 어렵습니다.`,
+        react: `제가 몇 년을 관리해 온 걸 의미 없다고 하시네요. 그만하시죠.`,
+        coach: `사실의 방향은 맞아도 말하는 방식이 틀렸습니다. NAS 백업은 팀장이 직접 만들고 지켜 온 결과물입니다. 부정하지 말고 '위치'만 질문하십시오.` },
+      { grade: `bad`,
+        text: `이참에 NAS는 걷어내시고 메디세이프 하나로 통합하시죠. 장비도 줄고 관리할 곳도 하나로 줄어드니까 팀장님이 훨씬 편해지십니다.`,
+        react: `멀쩡히 도는 걸 걷어내라고요? 제일 싫어하는 얘기를 하시네요.`,
+        coach: `변화를 싫어하는 상대에게 '걷어내라'는 가장 나쁜 제안입니다. 메디세이프는 지금 환경을 그대로 둔 채, 병원 밖에 복구본을 한 벌 더 두는 것입니다.` },
+    ],
+  },
+  {
+    theme: `백업도 한다`,
+    id: `emrvendor`, title: `EMR 업체가 백업도 해 줍니다`,
+    line: `그리고 백업은 EMR 업체에서도 따로 챙겨 줍니다. 유지보수 계약에 들어 있어요. 이중으로 하고 있는 셈인데 뭘 더 합니까.`,
+    options: [
+      { grade: `best`,
+        text: `업체가 챙겨 주고 있다면 다행입니다. 그럼 두 가지만 확인해 보시죠. 그 백업본은 병원 안에 있습니까, 밖에 있습니까? 그리고 사고가 났을 때 몇 시간 안에 복구해 준다는 약속이 유지보수 계약서에 적혀 있습니까? 둘 다 그렇다면 저희가 필요 없으실 수도 있습니다.`,
+        face: `realize`,
+        react: `…백업 서버는 저희 서버실에 있죠. 복구 시간 같은 건 계약서에 없고요.`,
+        coach: `EMR 업체의 백업을 부정하지 않고, '위치'와 '계약서에 적힌 복구 약속' 두 가지를 물었습니다. "둘 다 그렇다면 필요 없으실 수도 있다"는 말은 팔러 온 사람이 아니라 점검해 주는 사람으로 보이게 합니다.` },
+      { grade: `vbad`,
+        text: `EMR 업체는 백업 전문 회사가 아닙니다. 유지보수에 끼워 주는 백업은 형식적인 경우가 많아서 막상 사고가 나면 복구가 안 되는 일이 허다합니다. 백업 파일이 깨져 있거나 몇 달 전 것인 경우도 많았고, 실제로 그런 병원을 여럿 봤습니다. 그 업체 말만 믿고 계시면 나중에 큰일 납니다.`,
+        react: `그 업체랑 10년을 같이 일했습니다. 근거도 없이 그렇게 말씀하시면 곤란하죠.`,
+        coach: `전산팀장이 오래 함께 일해 온 협력 업체를 근거 없이 깎아내렸고, 확인되지 않은 '다른 병원' 이야기도 꺼냈습니다. 상대의 업체가 아니라 백업본의 위치와 계약서를 물으십시오.` },
+      { grade: `bad`,
+        text: `그럼 이참에 EMR 업체 백업은 유지보수 계약에서 빼시고 메디세이프로 일원화하시죠. 유지보수 비용도 줄일 수 있고, 백업 창구가 하나로 정리되니까 관리하기도 훨씬 편해지십니다.`,
+        react: `잘 돌아가는 계약을 왜 건드립니까. 업체랑 다시 협상하는 것도 다 제 일입니다.`,
+        coach: `있는 것을 걷어내라는 제안은 변화를 싫어하는 상대에게 가장 나쁜 접근입니다. 메디세이프는 기존 백업을 대체하는 것이 아니라 병원 밖에 복구본을 한 벌 더 두는 것입니다.` },
+      { grade: `ok`,
+        text: `EMR 업체 백업도 대부분 병원 안 서버에 저장됩니다. 같은 네트워크에 있으면 랜섬웨어가 들어왔을 때 원본과 함께 잠길 수 있습니다. 메디세이프는 병원 망과 끊어진 바깥에 나눠 보관합니다.`,
+        react: `대부분이 그렇다는 거지, 저희가 그런지는 모르시잖아요.`,
+        coach: `내용은 맞을 가능성이 높지만 상대 병원을 확인하지 않고 단정했습니다. "그 백업본은 어디에 있습니까?"라고 물으면 팀장이 직접 답하게 됩니다.` },
+    ],
+  },
+  {
+    theme: `백업도 한다`,
+    id: `restore`, title: `백업본 있으니 복구하면 됩니다`,
+    line: `설령 그런 일이 생겨도 백업본이 있으니 복구하면 됩니다. 파일 살려본 적도 여러 번 있고요.`,
+    options: [
+      { grade: `best`,
+        text: `파일 복원은 해보셨군요. 그럼 서버 전체를 되살리는 데 얼마나 걸리는지 측정해 보신 적은 있으십니까? 메디세이프는 모의 복구로 그 시간을 재는데 평균 4시간, 최대 8시간입니다. 계약 기준값은 병원 환경을 확인한 뒤 계약서에 숫자로 씁니다.`,
+        face: `realize`,
+        react: `전체 복구는… 돌려본 적 없죠. 솔직히 며칠이 걸릴지 저도 모릅니다.`,
+        coach: `병원이 사는 것은 저장공간이 아니라 다시 진료를 여는 시간입니다. 질문으로 빈틈을 확인한 뒤, 측정값은 '모의 복구 결과'로, 약속은 '계약서에 쓴다'로 나눠 말했습니다.` },
+      { grade: `vbad`,
+        text: `메디세이프는 4시간이면 무조건 복구됩니다. 데이터가 아무리 많아도 사실상 즉시 복구라고 보시면 되고, 사고가 나더라도 그동안 진료가 멈출 일은 없습니다. 그 부분은 제가 보장합니다.`,
+        react: `무조건이요? 저희 데이터가 몇 테라인지도 모르시면서 시간을 보장하십니까.`,
+        coach: `'즉시 복구'는 금지 표현이고, "4시간이면 됩니다"라는 단정도 하지 않습니다. 평균 4시간·최대 8시간은 모의 복구 측정값이며, 계약 기준값은 병원 환경 확인 후 확정합니다.` },
+      { grade: `bad`,
+        text: `대학병원도 복구에 이틀이 걸렸습니다. 전담 인력에 장비까지 다 갖춘 곳이 그 정도입니다. 전담 인력도 없는 여기서는 몇 주는 걸릴 거고, 파일 몇 개 살리는 것과 서버 전체를 되살리는 건 차원이 다릅니다. 솔직히 복구가 될지도 장담 못 하실 겁니다.`,
+        react: `저희 실력을 어떻게 아시고 그렇게 단정하십니까?`,
+        coach: `대부분의 병원에서 3~4주가 걸리고 복구가 불확실하다는 것은 사실입니다. 하지만 상대의 역량을 단정하는 말로 전하면 반발만 남습니다. "측정해 보셨습니까?"라고 물으십시오.` },
+      { grade: `ok`,
+        text: `복구가 되느냐보다 얼마나 걸리느냐가 중요합니다. 대부분의 병원은 3~4주가 걸리고 그동안 진료가 멈춥니다. 메디세이프는 복구 시간을 계약서에 숫자로 쓰고 정기 테스트로 검증합니다.`,
+        face: `curious`,
+        react: `계약서에 쓴다는 건 좀 다르긴 하네요.`,
+        coach: `핵심을 잘 짚었습니다. 여기에 "전체 복구 시간을 측정해 보셨습니까?"라는 질문을 앞에 두면, 팀장이 자기 병원의 빈틈을 직접 확인하게 됩니다.` },
+    ],
+  },
+  {
+    theme: `기술 질문`, tech: true, ask: (g) => g >= 50 ? `curious` : `skeptical`,
+    id: `t-rpo`, title: `하루 한 번이면 그 사이 데이터는요`,
+    verify: `일 1회 백업(최대 하루치 손실) 잠정 기준이 현재도 유효한지`,
+    line: `복구 시간은 그렇다 치고, 백업은 얼마나 자주 합니까? 하루 한 번이라면 그 사이에 쌓인 데이터는 날아가는 거 아닙니까.`,
+    options: [
+      { grade: `best`,
+        text: `맞습니다. 현재 기준은 하루 한 번 백업이라, 최악의 경우 마지막 백업 이후 최대 하루치 데이터는 복구되지 않을 수 있습니다. 이 부분은 숨기지 않겠습니다. 다만 이 기준은 계약할 때 병원 환경을 보고 확정하니, 더 짧은 주기가 필요하시면 설명회에서 협의하시면 됩니다.`,
+        react: `불리한 얘기를 먼저 하시네요. 하루치면 지금 NAS랑 같은 조건이긴 합니다.`,
+        coach: `불리할 수 있는 숫자(일 1회 백업, 최대 하루치 손실)를 그대로 말했습니다. 전산팀장은 어차피 설명회에서 알게 됩니다. 영업사원이 먼저 말하면 신뢰가 되고, 나중에 드러나면 숨긴 것이 됩니다. 이 기준값은 잠정이며 계약 시 확정됩니다.` },
+      { grade: `vbad`,
+        text: `실시간으로 백업되기 때문에 그 사이에 날아가는 데이터는 없습니다. 변경이 생길 때마다 바로바로 올라가는 구조라서 사고가 나기 직전 상태 그대로 복구된다고 보시면 됩니다. 복구 시점도 분 단위로 고르실 수 있습니다. 하루 한 번 도는 NAS와는 비교가 안 되고, 그래서 대학병원급에서도 관심을 갖는 겁니다.`,
+        face: `skeptical`,
+        react: `실시간이요? 그 말씀, 설명회에서 기술진한테 그대로 확인해 보겠습니다.`,
+        coach: `사실이 아닙니다. 현재 기준은 일 1회 백업입니다. 없는 기능을 말하면 제품설명회에서 바로 드러나고, 그 순간 앞서 한 말 전부가 의심받습니다.` },
+      { grade: `bad`,
+        text: `하루치 데이터 정도는 종이 기록이나 검사 장비에 남아 있는 자료로 다시 입력하시면 됩니다. 몇 주씩 진료가 멈추는 것에 비하면 그 정도는 큰 문제가 아니라고 보셔도 됩니다.`,
+        react: `하루치 재입력이 얼마나 큰일인지 모르시는군요. 그걸 누가 합니까.`,
+        coach: `상대의 걱정을 '큰 문제가 아니다'로 깎아내렸습니다. 전산팀장에게 하루치 데이터 손실은 실제 업무입니다. 한계는 인정하고, 조정 가능성은 계약 협의로 연결해야 합니다.` },
+      { grade: `ok`,
+        text: `백업 주기는 병원 환경에 따라 달라질 수 있어서, 제품설명회에서 히포크랏랩스 기술진이 정확하게 설명드리는 게 낫겠습니다. 그 자리에서 원하시는 주기를 말씀해 주시면 됩니다.`,
+        react: `기본이 하루에 몇 번인지도 모르십니까? 그 정도는 알고 오셔야죠.`,
+        coach: `틀린 말은 아니지만, '일 1회 백업 기준'은 영업사원이 알고 있어야 하는 확정 사실입니다. 아는 숫자까지 설명회로 미루면 준비가 안 된 사람으로 보입니다.` },
+    ],
+  },
+  {
+    theme: `기술 질문`, tech: true, ask: (g) => g >= 50 ? `curious` : `skeptical`,
+    id: `t-infected`, title: `감염된 파일이 백업되면요`,
+    verify: `'세이브 포인트'(문제 발생 전 시점으로 복구) 표현의 정확한 범위, 복구 지점 보관 기간·세대 수`,
+    line: `랜섬웨어는 며칠씩 숨어 있다가 터집니다. 그럼 이미 감염된 파일이 백업으로 올라가 있을 텐데, 그 백업본으로 복구하면 또 감염되는 거 아닙니까.`,
+    options: [
+      { grade: `best`,
+        text: `그래서 마지막 한 벌만 덮어쓰는 백업이 아니라, 문제가 생기기 전 시점으로 되돌아가는 '세이브 포인트' 방식이어야 하고 메디세이프가 그 방식입니다. 다만 복구 지점을 며칠 치까지 보관하는지는 확인된 숫자가 없어서, 질문을 적어 설명회 전에 전달해 두겠습니다.`,
+        react: `시점을 골라 돌아간다는 거군요. 보관 기간은 꼭 확인해 주세요.`,
+        coach: `'문제가 생기기 전 시점으로 되돌아간다'는 확정된 개념은 직접 말하고, 보관 기간처럼 확인되지 않은 숫자는 지어내지 않았습니다. 기술 질문을 받아 적어 미리 전달하는 것까지가 영업사원의 몫입니다.` },
+      { grade: `vbad`,
+        text: `그 부분은 걱정 안 하셔도 됩니다. 블록체인으로 검증하기 때문에 감염된 파일은 백업 단계에서 자동으로 걸러집니다. AI가 랜섬웨어 패턴을 탐지해서 깨끗한 파일만 올리는 구조라 백업본이 오염되는 일은 있을 수 없고, 언제 복구하시든 항상 깨끗한 상태로 돌아옵니다.`,
+        face: `skeptical`,
+        react: `블록체인이 악성코드를 거른다고요? 무결성 검증이랑 악성코드 탐지는 다른 얘기인데요.`,
+        coach: `없는 기능을 지어냈습니다. 블록체인 검증은 백업본이 위·변조되지 않았음을 확인하는 것이지 악성코드를 걸러 내는 기능이 아닙니다. 전산팀장은 이 차이를 정확히 압니다.` },
+      { grade: `bad`,
+        text: `요즘 랜섬웨어는 들어오면 바로 터지기 때문에 오래 잠복하는 경우는 드뭅니다. 그런 드문 경우까지 걱정하시면 어떤 백업도 못 쓰십니다. 일반적인 상황에서는 문제없이 복구됩니다.`,
+        react: `드물다는 근거가 뭡니까? 저는 그 드문 경우를 막는 게 일입니다.`,
+        coach: `상대의 전문적인 우려를 '드문 경우'로 깎아내렸습니다. 전산팀장의 일은 바로 그 드문 경우를 대비하는 것입니다.` },
+      { grade: `ok`,
+        text: `복구 지점이나 보관 방식 같은 세부 내용은 제가 말씀드리기보다, 제품설명회에서 히포크랏랩스 기술진이 구조를 보여드리면서 설명하는 편이 정확합니다. 그때 꼭 확인해 보십시오.`,
+        react: `핵심적인 질문인데 아무 말씀도 못 하시는군요.`,
+        coach: `넘긴 방향은 맞지만, '문제가 생기기 전 시점으로 되돌아가는 방식'이라는 확정된 개념은 직접 말할 수 있어야 합니다.` },
+    ],
+  },
+  {
+    theme: `백업도 한다`,
+    id: `cloud`, title: `클라우드에 직접 올리면 됩니다`,
+    verify: `3년 총비용 산출 기준 — 월 300만 × 36개월 = 1.08억인데 자료는 1.2억, 연 비용도 3,600만/3,900만 혼재. 확인 전까지 '절반 수준'으로만 표현`,
+    line: `밖에 두는 게 핵심이라면, 클라우드 스토리지 계약해서 제가 직접 올리면 되죠. 그게 비용도 덜 들 것 같은데요.`,
+    options: [
+      { grade: `best`,
+        text: `가능한 방법입니다. 다만 클라우드 스토리지는 저장 공간만 빌려주는 것이라 백업 프로그램, 회선, 복원 전송료, 운영이 전부 병원 몫으로 남고, 복구 시간은 아무도 약속해 주지 않습니다. 메디세이프는 운영과 복구까지 포함이고, 복구 기준을 계약서에 씁니다.`,
+        face: `realize`,
+        react: `저장 공간만 주는 거긴 하죠. 복구는 결국 제가 해야 되고.`,
+        coach: `대안을 부정하지 않고, 차이를 '저장 공간을 사는 것'과 '복구 책임을 맡기는 것'으로 갈랐습니다. 직접 올리면 장소만 바뀔 뿐 운영과 복구 책임은 그대로 전산실에 남습니다. 비용도 100TB·3년 기준 클라우드는 2억 원을 넘고 메디세이프는 그 절반 수준입니다.` },
+      { grade: `ok`,
+        text: `비용은 오히려 반대입니다. 100TB 기준 3년 총비용이 클라우드 스토리지는 2.1억~2.3억 원이고, 메디세이프는 그 절반 수준입니다. 초기 투자도 클라우드는 3,600만 원 이상 들지만 메디세이프는 없습니다. 숫자로 비교해 보시면 직접 하시는 쪽이 더 비쌉니다.`,
+        react: `숫자는 그렇다 치고, 제가 직접 하면 제 마음대로 할 수 있잖아요.`,
+        coach: `숫자는 정확합니다. 다만 비용만 비교하면 절반만 답한 것입니다. 클라우드에 직접 올려도 운영과 복구는 전산실 몫으로 남는다는 점, 즉 책임이 어디에 있는지를 함께 말해야 합니다.` },
+      { grade: `vbad`,
+        text: `클라우드는 해킹 위험이 커서 의료 데이터를 올리시면 안 됩니다. 환자 정보를 일반 클라우드에 두는 건 법적으로도 문제가 될 수 있어서, 나중에 감사라도 나오면 팀장님이 곤란해지십니다.`,
+        react: `메디세이프도 병원 밖에 두는 거 아닙니까? 말씀이 앞뒤가 안 맞는데요.`,
+        coach: `사실이 아닙니다. 전자의무기록의 외부 보관은 2016년부터 허용된 제도이고, 메디세이프도 국내에 서버를 둔 아마존·구글 클라우드에 분산 저장합니다. 클라우드를 깎아내리면 제품의 근거까지 스스로 무너뜨리게 됩니다.` },
+      { grade: `bad`,
+        text: `클라우드 백업을 직접 구성하는 건 생각보다 복잡합니다. 백업 프로그램도 따로 사야 하고 설정도 까다로워서, 두 분이서 겸직으로 하시기에는 벅차실 겁니다. 전문 업체에 맡기시는 편이 안전합니다.`,
+        react: `제가 못 한다는 말씀입니까? 그 정도는 저도 합니다.`,
+        coach: `상대의 역량을 의심하는 말은 반발만 부릅니다. '할 수 있느냐'가 아니라 '해 놓은 뒤 운영과 복구 책임을 누가 지느냐'로 이야기해야 합니다.` },
+    ],
+  },
+  {
+    theme: `일과 책임`,
+    id: `manage`, title: `관리할 게 하나 더 늡니다`,
+    line: `결국 관리할 게 하나 더 느는 거잖아요. 장비가 하나 들어오면 모니터링도, 장애 대응도 다 저희 둘 일입니다.`,
+    options: [
+      { grade: `best`,
+        text: `그래서 장비를 사시는 게 아니라 구독입니다. 서버 구입도, 전산 인력 추가도 없습니다. 설치와 운영, 모니터링, 복구는 히포크랏랩스가 맡고, 전산팀에서는 처음에 백업할 데이터 범위를 확인해 주시면 됩니다.`,
+        react: `운영을 그쪽에서 한다… 저희가 챙길 게 범위 확인 정도라면 부담은 덜하네요.`,
+        coach: `구독형의 의미를 '일이 늘지 않는다'로 옮겨 말했습니다. 동시에 전산팀이 실제로 할 일(초기 데이터 범위 확인)을 숨기지 않아 신뢰를 지켰습니다.` },
+      { grade: `bad`,
+        text: `계약만 하시면 그 뒤로 전산실은 할 일이 전혀 없습니다. 설치부터 운영, 장애 대응까지 전부 알아서 돌아가니까 아예 신경을 끄셔도 됩니다. 팀장님은 매달 보고서만 받아 보시면 됩니다.`,
+        react: `할 일이 없는 시스템은 없습니다. 그렇게 말하는 업체가 제일 불안해요.`,
+        coach: `'계약 후 할 일 없음'은 금지 표현입니다. 초기 데이터 범위 확인이 필요하고, 외부 보관 요건 중 네트워크 이중화는 병원이 직접 갖춰야 하는 항목입니다. 부담이 '적다'와 '없다'는 다릅니다.` },
+      { grade: `bad`,
+        text: `관리자 화면이 아주 직관적입니다. 교육 한 번만 받으시면 팀장님이 직접 백업 정책도 짜고 모니터링도 하실 수 있습니다. 기능이 많아 보여도 실제로 쓰는 메뉴는 몇 개 안 돼서 금방 익숙해지십니다. 필요하시면 교육 일정도 제가 잡아 드리겠습니다.`,
+        react: `그러니까 결국 제가 배워서 제가 운영하라는 얘기군요.`,
+        coach: `부담을 걱정하는 상대에게 '직접 하실 수 있다'는 일을 얹는 말입니다. 메디세이프의 장점은 쉬운 화면이 아니라, 운영을 히포크랏랩스가 맡는다는 점입니다.` },
+      { grade: `ok`,
+        text: `EMR·PACS를 그대로 쓰시기 때문에 도입하면서 바뀌는 게 없습니다. 진료 현장도 전산실도 기존 업무 흐름이 지금과 똑같이 유지되고, 직원 교육을 따로 하실 필요도 없습니다.`,
+        react: `바뀌는 게 없는 건 좋은데, 제가 물은 건 누가 관리하느냐입니다.`,
+        coach: `틀린 말은 아니지만 질문에 답하지 않았습니다. 팀장이 물은 것은 '누가 운영하느냐'입니다. 설치·운영·복구를 히포크랏랩스가 맡는다고 답해야 합니다.` },
+    ],
+  },
+  {
+    theme: `기술 질문`, tech: true, ask: (g) => g >= 50 ? `curious` : `skeptical`,
+    id: `t-where`, title: `서버가 다 잠겼는데 어디에 복구합니까`,
+    line: `복구를 그쪽에서 한다고 하셨는데, 사고가 나면 서버가 전부 잠겨 있을 겁니다. 어디에다 복구합니까? 그쪽 직원이 병원에 오기는 합니까?`,
+    options: [
+      { grade: `best`,
+        text: `사고가 나면 복구는 히포크랏랩스가 수행하고, 24시간 대응합니다. 병원이 복구용 공간이나 네트워크를 미리 구축해 두실 필요는 없습니다. 다만 어떤 장비에 어떤 순서로 복구하는지는 병원 환경마다 달라서, 설명회에서 복구 절차를 문서로 놓고 확인하시는 게 정확합니다.`,
+        react: `절차를 문서로 본다… 좋습니다. 그건 제가 꼼꼼히 보겠습니다.`,
+        coach: `누가 복구하는지, 병원이 미리 구축할 것이 없다는 확정된 원칙은 직접 말했습니다. 장비와 순서 같은 절차는 지어내지 않고 '문서로 확인'으로 넘겼습니다. 전산팀장은 말보다 절차서를 믿습니다.` },
+      { grade: `vbad`,
+        text: `서버가 잠겨 있어도 상관없습니다. 클라우드에 있는 백업본으로 EMR과 PACS를 바로 띄워서 진료를 이어 가실 수 있고, 그동안 저희 엔지니어가 병원에 상주하면서 서버를 새로 구축해 드립니다. 그 비용도 구독료에 포함이라 추가 부담은 없고, 팀장님은 지켜보기만 하시면 됩니다.`,
+        face: `skeptical`,
+        react: `클라우드에서 EMR을 바로 띄운다고요? EMR 업체 라이선스는요? 그게 된다는 걸 문서로 주십시오.`,
+        coach: `확인되지 않은 기능(클라우드에서 즉시 가동, 엔지니어 상주)을 약속했습니다. 복구 방식은 영업사원이 그리는 것이 아닙니다. 주체와 원칙만 말하고 절차는 기술진과 문서에 맡기십시오.` },
+      { grade: `bad`,
+        text: `복구는 생각보다 간단합니다. 관리 화면에서 복구할 시점을 고르고 버튼만 누르면 되기 때문에, 굳이 엔지니어가 오지 않아도 팀장님이 직접 하실 수 있습니다. 교육도 한 시간이면 충분합니다.`,
+        react: `결국 그 난리통에 제가 직접 하라는 얘기네요. 그쪽에서 해 준다면서요.`,
+        coach: `'복구는 히포크랏랩스가 한다'는 핵심 메시지를 스스로 뒤집었습니다. 사고 현장에서 전산팀장이 원하는 것은 쉬운 버튼이 아니라 책임지고 복구해 줄 사람입니다.` },
+      { grade: `ok`,
+        text: `복구 절차는 병원마다 환경이 달라서 제가 일반적으로 말씀드리기가 어렵습니다. 제품설명회에서 히포크랏랩스 기술진이 팀장님 병원 환경에 맞춰 자세히 설명드릴 겁니다.`,
+        react: `그래도 누가 와서 하는지 정도는 말씀해 주실 수 있잖아요.`,
+        coach: `넘긴 방향은 맞지만, '복구는 히포크랏랩스가 수행하고 24시간 대응한다', '병원이 복구용 공간을 미리 구축할 필요가 없다'는 확정 사실은 직접 말했어야 합니다.` },
+    ],
+  },
+  {
+    theme: `일과 책임`,
+    id: `resp`, title: `사고 나면 제가 책임집니다`,
+    verify: `책임의 외주화 범위 — 실제 계약서·복구 기준 문구와 일치하는지(법무 확인 권장)`,
+    key: true,
+    line: `솔직히 말씀드리면요, 새로 뭘 넣었다가 사고가 나면 결국 제가 책임져야 합니다. 그래서 안 하는 게 제일 안전한 거예요.`,
+    options: [
+      { grade: `best`,
+        text: `그럼 지금은 어떻습니까. 오늘 밤 서버와 NAS가 같이 잠기면 복구 책임은 팀장님 두 분께 있습니다. 메디세이프는 백업·복구 솔루션이면서, 그 책임을 계약으로 밖에 맡기는 것입니다. 복구 시간과 책임 범위를 계약서에 쓰고, 사고가 나면 복구는 히포크랏랩스가 합니다.`,
+        face: `realize`,
+        react: `…안 하는 게 안전한 게 아니라, 지금이 제일 위험한 거였네요. 계약서에 쓴다는 거죠?`,
+        coach: `이 면담의 승부처입니다. 전산팀장이 변화를 싫어하는 진짜 이유는 책임입니다. 메디세이프는 백업·복구 솔루션인 동시에 백업·복구 책임의 외주화입니다. '안 하면 안전하다'를 '지금은 전부 내 책임이다'로 뒤집었습니다. 정기 복구 테스트 결과를 보고서로 제출한다는 점도 함께 말할 수 있습니다.` },
+      { grade: `vbad`,
+        text: `맡기시면 사고가 나도 병원과 팀장님 책임은 전혀 없습니다. 운영을 저희 쪽에서 하는 만큼 법적 책임까지 전부 넘어옵니다. 개인정보가 유출되든 복구가 늦어지든 계약상 전부 저희 책임이고, 과징금이 나오더라도 병원이 부담하실 일은 없으니 걱정하지 않으셔도 됩니다.`,
+        react: `위탁을 준다고 병원 책임이 없어지진 않습니다. 그건 제가 더 잘 알아요. 그렇게 말씀하시면 나머지도 못 믿겠네요.`,
+        coach: `책임의 외주화는 책임이 전부 사라진다는 뜻이 아닙니다. 맡겨도 병원의 관리·감독 책임은 남습니다. 넘어가는 것은 백업 운영과 복구를 해내야 하는 책임이고, 그 범위는 계약서에 적힌 만큼입니다. 과장하면 핵심 메시지 전체가 무너집니다.` },
+      { grade: `weak`,
+        text: `대웅제약이 직접 하는 사업입니다. 제약회사가 병원을 상대로 허투루 일하지는 않습니다. 저희 이름을 걸고 하는 일이니, 혹시 문제가 생기더라도 제가 끝까지 책임지고 챙겨드리겠습니다.`,
+        face: `skeptical`,
+        react: `말씀은 고마운데, 그건 약속이지 책임 구조는 아니죠.`,
+        coach: `회사 이름은 책임 구조를 대신하지 못합니다. 개발·운영은 히포크랏랩스, 영업은 대웅제약이며, 책임 범위와 복구 기준은 문서로 확인해 드린다고 답해야 합니다.` },
+      { grade: `vbad`,
+        text: `이미 인근 병원들도 다 쓰고 있어서 검증이 끝난 서비스입니다. 다른 병원 전산팀장님들도 처음엔 같은 걱정을 하셨는데 지금은 다들 만족하시고, 사고가 난 곳도 한 군데 없었습니다.`,
+        face: `skeptical`,
+        react: `어느 병원이요? 제가 그쪽 전산실에 전화해 봐도 됩니까?`,
+        coach: `계약이 확정되지 않은 병원을 도입 사례처럼 말하지 않습니다. 전산팀장들은 서로 연락이 닿습니다. 사례 대신 계약서의 책임 범위와 복구 테스트 보고서로 증명하십시오.` },
+    ],
+  },
+  {
+    theme: `기술 질문`, tech: true, ask: (g) => g >= 50 ? `curious` : `skeptical`,
+    id: `t-sla`, title: `그 시간을 못 지키면 어떻게 됩니까`,
+    verify: `복구 시간 미준수 시 조치 조항의 유무와 내용`,
+    line: `계약서에 복구 시간을 쓴다고 하셨죠. 그럼 그 시간을 못 지키면 어떻게 됩니까? 그것도 계약서에 있습니까?`,
+    options: [
+      { grade: `best`,
+        text: `그 질문이 '계약서에 쓴다'는 말의 핵심입니다. 못 지켰을 때 어떻게 되는지도 조항으로 확인하셔야 합니다. 다만 그 조건을 제가 기억에 의존해 말씀드리면 안 됩니다. 설명회 때 계약서의 해당 조항을 그대로 보여드리도록 요청해 두겠습니다.`,
+        react: `조항을 직접 보여 준다면 그게 제일 확실하죠. 그 부분은 꼭 챙겨 주세요.`,
+        coach: `계약 조건은 말이 아니라 조항으로 답합니다. 보상이나 위약 조건을 기억이나 짐작으로 말하면, 그 말이 나중에 병원과의 분쟁 근거가 됩니다. '조항을 그대로 보여드리겠다'가 가장 강한 답입니다.` },
+      { grade: `vbad`,
+        text: `못 지키면 그달 구독료는 전액 환불해 드리고, 진료를 못 해서 생긴 손해까지 저희가 배상해 드립니다. 그만큼 복구 시간에 자신이 있다는 뜻입니다. 대웅제약이 보증하는 조건이고 계약서에도 그렇게 들어가니까 그 부분은 안심하셔도 됩니다.`,
+        face: `cold`,
+        react: `손해까지 배상한다고요. 지금 하신 말씀, 회의록에 그대로 적어 두겠습니다.`,
+        coach: `확인되지 않은 보상 조건을 약속했습니다. 전산팀장은 화를 내지 않고 그 말을 기록합니다. 계약서에 없는 약속은 나중에 영업사원 개인과 회사 모두의 부담으로 돌아옵니다.` },
+      { grade: `bad`,
+        text: `그럴 일은 없습니다. 복구 시간은 모의 복구로 여러 번 검증된 수치라서 못 지킬 가능성은 거의 없다고 보시면 됩니다. 일어나지도 않을 일을 미리 걱정하실 필요는 없습니다.`,
+        react: `거의 없다는 게 계약 조건은 아니죠. 제가 물은 건 못 지켰을 때입니다.`,
+        coach: `질문을 피했고 단정까지 했습니다. 전산팀장은 '잘 될 때'가 아니라 '안 될 때'를 묻고 있습니다. 그 질문에 정면으로 답해야 책임의 외주화가 말이 됩니다.` },
+      { grade: `weak`,
+        text: `그 부분은 계약이나 법무 쪽 내용이라 제가 잘 알지 못합니다. 계약 단계에 가시면 담당자가 따로 설명드릴 테니, 그때 확인해 보시면 될 것 같습니다.`,
+        face: `cold`,
+        react: `계약 단계까지 가야 알 수 있다면, 저는 거기까지 안 갑니다.`,
+        coach: `모르는 것을 지어내지 않은 것은 좋습니다. 하지만 전산팀장은 이 답을 듣기 전에는 다음 단계로 가지 않습니다. 설명회에서 해당 조항을 보여드리겠다고 '지금' 약속해야 합니다.` },
+    ],
+  },
+  {
+    theme: `일과 책임`,
+    id: `report`, title: `그동안 잘못했다고 보고하라는 겁니까`,
+    line: `그런데 이걸 올리면 원장님이 뭐라고 하시겠습니까. "그럼 지금까지 백업은 엉터리였냐"고 하실 텐데요. 제 입으로 그동안 잘못했다고 보고하라는 거잖아요.`,
+    options: [
+      { grade: `best`,
+        text: `그렇게 보고하실 일이 아닙니다. 백업이 잘못됐던 게 아니라 기준이 바뀐 겁니다. 2026년 9월부터 개인정보보호법이 강화돼 과징금이 오르고 대표자 책임이 명문화됐습니다. 법이 바뀌어 복구 체계를 한 단계 올린다는 보고이고, 그걸 먼저 챙긴 사람이 팀장님이 되십니다.`,
+        react: `기준이 바뀌었다… 그렇게 올리면 말이 되긴 하네요.`,
+        coach: `도입이 '과거의 잘못 인정'이 되면 전산팀장은 끝까지 반대합니다. 원인을 팀장이 아닌 바뀐 환경(법 강화)에 두고, 팀장을 '먼저 대비한 사람'으로 세웠습니다.` },
+      { grade: `vbad`,
+        text: `솔직히 그동안 위험하게 운영해 오신 건 맞으니까요. 사고가 난 뒤에 알려지는 것보다는 이번 기회에 있는 그대로 보고하시는 편이 낫습니다. 원장님도 솔직하게 말씀드리면 이해해 주실 겁니다.`,
+        react: `위험하게 운영했다고요? 말씀이 지나치시네요.`,
+        coach: `상대가 가장 두려워하는 것을 그대로 찔렀습니다. NAS 백업은 그 시점의 합리적인 선택이었습니다. 바뀐 것은 공격 방식과 법이지 팀장의 역량이 아닙니다.` },
+      { grade: `bad`,
+        text: `그 부분은 걱정하지 마십시오. 원장님께 올릴 보고서는 제가 대신 작성해 드리겠습니다. 이런 자료는 많이 만들어 봐서 금방 됩니다. 팀장님은 검토만 하시고 그대로 올리시면 됩니다.`,
+        react: `업체가 써 준 보고서를 제 이름으로 올리라고요? 그건 곤란합니다.`,
+        coach: `도우려는 의도지만 전산팀장의 전문성을 건너뛰는 제안입니다. 보고의 주인은 팀장입니다. 영업사원은 보고에 쓸 근거(법 개정, 비용 비교, 복구 기준)를 드리는 역할입니다.` },
+      { grade: `weak`,
+        text: `원장님께서 그렇게 보실 수도 있겠습니다. 다만 요즘은 법도 강화되고 사고도 늘어서, 병원들이 백업·복구 체계를 다시 점검하는 분위기입니다. 팀장님만 그런 보고를 올리시는 건 아닐 겁니다. 원장님도 뉴스를 보셨을 테니 크게 문제 삼지는 않으실 겁니다.`,
+        face: `skeptical`,
+        react: `분위기는 분위기고, 제 보고서에는 뭐라고 씁니까.`,
+        coach: `방향은 맞지만 팀장이 보고서에 옮겨 쓸 문장이 없습니다. '2026년 9월 개인정보보호법 강화'처럼 날짜와 내용이 있는 근거를 쥐여 줘야 합니다.` },
+    ],
+  },
+  {
+    theme: `법과 요건`,
+    id: `law`, title: `병원 밖 보관, 법적으로 괜찮습니까`,
+    verify: `법령·고시 인용(2016.8 시행규칙, 2023.12 고시, 2026.9 개인정보보호법) 표현 확인`,
+    line: `그런데 환자 데이터를 병원 밖에 둔다는 거잖아요. 그거 법적으로 문제 되는 거 아닙니까? 유출이라도 되면요.`,
+    options: [
+      { grade: `best`,
+        text: `전자의무기록을 병원 밖에 보관하는 것은 2016년 의료법 시행규칙 개정으로 허용된 제도이고, 2023년 12월에는 인증 클라우드 요건도 간소화됐습니다. 데이터는 암호화해서 국내에 서버를 둔 클라우드에 나눠 보관합니다. 오히려 개인정보보호법이 강화된 지금은, 백업·복구 체계를 갖췄다는 근거가 병원을 지켜줍니다.`,
+        face: `curious`,
+        react: `2016년부터 됐던 거군요. 그건 몰랐습니다.`,
+        coach: `허용된 제도라는 사실, 보관 방식, 법이 강화된 지금의 이점 순으로 답했습니다. 외부 보관은 위험이 아니라 사고 이후 병원과 전산실을 지키는 근거가 됩니다.` },
+      { grade: `bad`,
+        text: `블록체인 분산원장에 해시값을 기록하는 구조라서 유출이나 변조는 절대 일어날 수 없습니다. 데이터를 조각내 여러 노드에 분산 저장하기 때문에 해커가 한 곳을 뚫어도 의미가 없습니다. 원본을 복원할 수 있는 건 병원뿐입니다. 기술적으로 100% 안전하다고 보시면 되니, 법적인 문제는 생길 수가 없습니다.`,
+        react: `보안에 '절대'가 어디 있습니까. 전산하는 사람 앞에서 그런 말씀은 마세요.`,
+        coach: `블록체인부터 꺼내지 않습니다. 설명 순서는 복구 가능성, 운영 부담, 도입 용이성입니다. 그리고 '절대', '100%'는 전산 전문가 앞에서 신뢰를 깎는 단어입니다.` },
+      { grade: `bad`,
+        text: `요즘은 은행도 대기업도 전부 클라우드를 씁니다. 병원만 서버실에 데이터를 쌓아두는 게 오히려 뒤처진 방식입니다. 다른 업계는 이미 다 옮겼으니 크게 걱정하실 일은 아닙니다.`,
+        react: `의료 데이터는 은행이랑 다릅니다. 그리고 저희가 뒤처졌다는 말씀인가요?`,
+        coach: `법적 근거를 묻는 질문에 분위기로 답했습니다. 2016년 시행규칙 개정과 2023년 고시 개정, 이 두 가지 사실로 답해야 합니다.` },
+      { grade: `ok`,
+        text: `법적 요건이나 고시 기준 같은 세부 내용은 제가 말씀드리기보다, 제품설명회에서 히포크랏랩스가 자료와 함께 정확하게 설명드리는 편이 낫겠습니다. 그 자리에서 직접 확인해 보시면 됩니다.`,
+        react: `그건 그때 보죠. 그런데 되긴 되는 겁니까?`,
+        coach: `세부를 기술진에게 넘긴 것은 맞는 판단입니다. 다만 '2016년부터 법으로 허용된 제도'라는 한 문장은 영업사원이 직접 말할 수 있어야 합니다.` },
+    ],
+  },
+  {
+    theme: `기술 질문`, tech: true, ask: (g) => g >= 50 ? `curious` : `skeptical`,
+    id: `t-cert`, title: `보안 인증과 데이터 저장 위치는요`,
+    verify: `ISMS-P 보유 여부, 아마존·구글이 고시상 '보안인증을 받은 클라우드'에 해당하는 근거`,
+    line: `법은 그렇다 치고, 그 회사 보안 인증은 뭐가 있습니까? ISMS-P는 있습니까? 그리고 데이터는 정확히 어디에 저장됩니까?`,
+    options: [
+      { grade: `best`,
+        text: `ISO/IEC 27001, 27017, 27018과 보건의료정보 보안 표준인 27799 인증을 갖고 있습니다. 데이터는 국내에 서버를 둔 아마존과 구글 클라우드에 나눠 저장해서 국내 보관 요건을 충족합니다. ISMS-P 보유 여부는 확인된 자료가 없어, 인증서 사본과 함께 설명회에서 문서로 확인하시게 하겠습니다.`,
+        react: `국내 서버라면 요건은 맞네요. ISMS-P는 모른다고 선을 그으시니 오히려 나머지 말씀에 믿음이 갑니다.`,
+        coach: `확인된 것(ISO/IEC 인증 4종, 국내에 서버를 둔 아마존·구글 클라우드에 분산 저장)은 정확히 말하고, 확인되지 않은 것(ISMS-P 보유 여부)은 선을 그었습니다. "그럼 제가 직접 아마존과 계약하면 되지 않느냐"는 질문이 이어지면, 저장 공간을 사는 것과 운영·복구 책임을 맡기는 것의 차이로 답하십시오.` },
+      { grade: `vbad`,
+        text: `ISMS-P도 있고 ISO 인증도 전부 갖추고 있어서 인증 쪽은 빠진 게 없습니다. 데이터는 히포크랏랩스가 수도권에서 직접 운영하는 전용 데이터센터에 보관하고, 출입 통제부터 이중 전원까지 다 되어 있어서 시설 보안은 대학병원 전산실보다 훨씬 낫습니다. 그 부분은 전혀 걱정하지 않으셔도 됩니다.`,
+        face: `skeptical`,
+        react: `ISMS-P 인증번호가 어떻게 됩니까? 인증 현황은 공개돼 있으니 바로 조회해 보겠습니다.`,
+        coach: `확인되지 않은 ISMS-P 보유를 단정했고, 저장 위치도 틀렸습니다. 데이터는 전용 데이터센터가 아니라 국내에 서버를 둔 아마존·구글 클라우드에 분산 저장합니다. 인증은 공개 조회가 되는 정보라 거짓이 바로 드러납니다. 자료에 있는 것은 ISO/IEC 인증 4종과 'ISMS-P 감사 지원'까지입니다.` },
+      { grade: `bad`,
+        text: `인증은 서류일 뿐이고 중요한 건 실제 기술력입니다. 블록체인 기반으로 분산 저장하는 구조 자체가 인증 몇 개보다 훨씬 안전하니까, 인증서보다는 기술을 봐 주셨으면 합니다.`,
+        react: `저희는 감사 때 그 서류를 냅니다. 서류가 없으면 도입 자체가 안 돼요.`,
+        coach: `전산팀장에게 인증은 감사와 내부 결재에 쓰는 실무 서류입니다. 그 가치를 깎아내리고 블록체인부터 꺼냈습니다. 보유한 인증을 정확히 말하는 것이 먼저입니다.` },
+      { grade: `ok`,
+        text: `보안 인증과 저장 위치 관련 자료는 제품설명회에서 히포크랏랩스가 인증서 사본과 함께 정리해서 드릴 겁니다. 제가 어설프게 말씀드리는 것보다 그 자료로 확인하시는 게 정확합니다.`,
+        react: `인증이 뭐가 있는지, 데이터가 국내에 있는지 정도는 지금 말씀해 주실 수 있잖아요.`,
+        coach: `문서로 확인시키겠다는 방향은 좋습니다. 다만 ISO/IEC 인증 4종과 '국내에 서버를 둔 아마존·구글 클라우드에 분산 저장'은 확정 사실입니다. 아는 것은 그 자리에서 말해야 합니다.` },
+    ],
+  },
+  {
+    theme: `회사와 계약`,
+    id: `reseller`, title: `결국 아마존을 빌려서 파는 거 아닙니까`,
+    line: `아마존이랑 구글이요? 그럼 결국 남의 클라우드를 빌려다가 웃돈 붙여 파는 거 아닙니까. 제가 직접 아마존과 계약하면 더 싸겠네요.`,
+    options: [
+      { grade: `best`,
+        text: `저장 공간이 아마존과 구글의 것이라는 점은 맞습니다. 다만 병원이 내시는 돈은 공간 값이 아니라, 나눠 저장하고, 위·변조를 검증하고, 복구 테스트를 하고, 사고가 나면 복구해 내는 일의 값입니다. 직접 계약하시면 공간은 생기지만 그 일과 책임은 전부 팀장님께 남습니다.`,
+        react: `공간이 아니라 일을 산다… 복구 책임까지 넘긴다는 얘기로군요.`,
+        coach: `사실(남의 클라우드를 쓴다)을 부정하지 않고, 병원이 사는 것이 '공간'이 아니라 '운영과 복구 책임'이라는 핵심 메시지로 돌아갔습니다. 원가나 마진 같은 내부 구조는 말하지 않았습니다.` },
+      { grade: `vbad`,
+        text: `웃돈이라고 하실 만한 구조가 아닙니다. 대량으로 계약하기 때문에 병원이 직접 하시는 것보다 단가가 훨씬 낮고, 저희 마진은 거의 없다고 보시면 됩니다. 원가 구조를 보시면 오히려 놀라실 겁니다. 직접 하시면 같은 용량에 두 배는 더 드십니다. 필요하시면 원가표도 보여드릴 수 있습니다.`,
+        face: `skeptical`,
+        react: `원가표를 보여 주신다고요? 그럼 다음에 꼭 가져오십시오.`,
+        coach: `영업사원이 알지 못하는 원가와 마진을 지어냈고, 지킬 수 없는 약속(원가표)까지 했습니다. 가격의 근거는 원가가 아니라 병원이 넘기는 일과 책임입니다.` },
+      { grade: `bad`,
+        text: `직접 하시면 법적 요건을 못 맞추십니다. 의료 데이터는 아무 클라우드에나 올릴 수 없고 인증과 설비 기준이 까다로워서, 병원이 개별로 계약해서는 사실상 불가능하다고 보셔야 합니다.`,
+        react: `불가능이요? 기준만 맞추면 되는 제도라고 아까 직접 말씀하셨잖아요.`,
+        coach: `사실과 다른 말로 대안을 막으려 했습니다. 직접 계약도 가능한 방법입니다. 가능 여부가 아니라, 해 놓은 뒤의 운영과 복구 책임이 누구에게 남는지를 말해야 합니다.` },
+      { grade: `ok`,
+        text: `직접 계약하시면 100TB 기준 3년 총비용이 2억 원을 넘습니다. 백업 프로그램과 회선, 복원 전송료가 따로 들기 때문입니다. 비용만 놓고 봐도 메디세이프 쪽이 부담이 적습니다.`,
+        react: `비용은 제가 따로 계산해 보죠. 그래서 그쪽이 해 주는 게 뭡니까?`,
+        coach: `숫자는 맞지만 '웃돈' 의심에 비용으로만 답했습니다. 병원이 사는 것이 공간이 아니라 운영·검증·복구라는 점을 먼저 말해야 합니다.` },
+    ],
+  },
+  {
+    theme: `회사와 계약`,
+    id: `coin`, title: `검색해 보니 코인 하는 회사던데요`,
+    verify: `이 질문에 대한 회사 공식 답변 확정 필요(블록체인·코인 사업과 메디세이프의 관계). 현재 정답은 임시 문구`,
+    line: `아까 회사 이름을 듣고 잠깐 찾아봤습니다. 히포크랏랩스, 블록체인에 코인까지 하는 회사던데요. 그런 회사에 환자 데이터를 맡겨도 되는 겁니까?`,
+    options: [
+      { grade: `best`,
+        text: `찾아보신 대로 블록체인 기술을 가진 회사가 맞습니다. 메디세이프에서는 그 기술을 백업본이 위·변조되지 않았는지 검증하는 데 씁니다. 병원은 월 구독료를 내는 서비스 계약을 맺는 것이고, 회사의 다른 사업은 제가 설명드릴 범위가 아닙니다. 회사 소개와 책임 범위는 설명회에서 문서로 확인하시게 하겠습니다.`,
+        react: `아는 범위까지만 말씀하시는군요. 회사 자료는 제가 직접 보겠습니다.`,
+        coach: `사실을 숨기지도, 모르는 것을 단정하지도 않았습니다. 제품에서 블록체인이 하는 일(위·변조 검증)과 병원이 맺는 계약의 성격만 말하고, 회사의 다른 사업은 공식 문서로 넘겼습니다. 이 질문의 공식 답변이 정해지면 그 문구를 그대로 씁니다.` },
+      { grade: `vbad`,
+        text: `코인 사업은 예전에 잠깐 했던 것이고 지금은 다 정리했습니다. 현재는 메디세이프 하나에만 집중하는 회사라서 그 부분은 전혀 신경 쓰지 않으셔도 됩니다. 저도 처음엔 똑같이 걱정했는데, 본사에서 재무 상태까지 다 확인했고 아무 문제 없었습니다. 환자 데이터와 코인은 완전히 분리돼 있습니다.`,
+        face: `skeptical`,
+        react: `다 정리했다고요? 제가 방금 본 건 최근 글이던데요.`,
+        coach: `확인되지 않은 회사 사정을 지어냈습니다. 전산팀장은 방금 검색한 화면을 보고 있습니다. 회사의 다른 사업에 대해서는 단정하지 말고 공식 문서로 연결하십시오.` },
+      { grade: `bad`,
+        text: `요즘 기술 회사치고 블록체인 안 하는 곳이 어디 있습니까. 오히려 그만큼 기술력이 있다는 뜻입니다. 코인에 대한 선입견 때문에 좋은 기술을 놓치시면 결국 팀장님만 손해입니다.`,
+        react: `선입견이요? 환자 데이터를 맡기는 일인데 그 정도 확인도 못 합니까.`,
+        coach: `정당한 확인을 '선입견'으로 몰았습니다. 환자 데이터를 맡길 회사를 살피는 것은 전산팀장의 책임입니다. 우려를 인정하고, 확인할 수 있는 문서를 약속하십시오.` },
+      { grade: `weak`,
+        text: `대웅제약이 여러 회사를 검토한 끝에 파트너로 선택한 곳입니다. 저희가 충분히 검증했으니 그 부분은 저희를 믿고 맡겨 주시면 됩니다. 문제가 생기면 대웅제약이 가만히 있지 않습니다.`,
+        face: `skeptical`,
+        react: `대웅제약을 못 믿는 게 아니라, 제가 직접 확인할 자료가 필요한 겁니다.`,
+        coach: `회사 이름은 확인 자료를 대신하지 못합니다. 개발·운영은 히포크랏랩스, 영업은 대웅제약이며, 책임 범위는 계약 문서로 확인해 드린다고 답해야 합니다.` },
+    ],
+  },
+  {
+    theme: `법과 요건`,
+    id: `dual`, title: `네트워크 이중화는 누가 합니까`,
+    line: `요건 얘기가 나와서 말인데, 외부 보관하려면 네트워크 이중화를 해야 하는 걸로 압니다. 그건 누가 합니까? 결국 제 일이잖아요.`,
+    options: [
+      { grade: `best`,
+        text: `맞습니다. 네트워크 이중화는 병원이 직접 갖춰야 하는 항목이고, 저희가 대신 구축해 드리는 영역이 아닙니다. 그 부분은 숨기지 않겠습니다. 다만 백업을 위해 어느 정도의 회선과 구성이 필요한지는 설명회에서 기술진이 설명드리니, 그걸 보시고 병원에서 준비하시면 됩니다.`,
+        react: `병원 몫이라고 먼저 말하는 업체는 처음 보네요. 필요한 구성은 설명회 때 확인하죠.`,
+        coach: `병원에 남는 일을 먼저 인정했습니다. 네트워크 이중화는 병원이 직접 갖추는 항목이며, 대웅제약도 히포크랏랩스도 구축을 대신하거나 비용을 부담하지 않습니다. 전산팀장은 '다 해 드립니다'보다 '이건 병원 몫입니다'를 신뢰합니다. 어떤 구성이 필요한지 알려주는 것까지가 설명회의 역할입니다.` },
+      { grade: `vbad`,
+        text: `그것도 저희가 전부 해 드립니다. 회선 신청부터 장비 설치, 통신사 협의까지 병원에서는 아무것도 준비하실 필요가 없습니다. 비용도 월 구독료에 다 들어 있어서 추가로 나가는 돈은 없고, 다른 병원들도 다 그렇게 진행했으니 팀장님은 일정만 잡아 주시면 됩니다.`,
+        face: `skeptical`,
+        react: `전부요? 그럼 그 내용을 계약서에 그대로 써 주실 수 있습니까?`,
+        coach: `네트워크 이중화는 병원이 직접 갖춰야 하는 항목이고, 구축을 대신해 주거나 비용을 부담하는 영역이 아닙니다. 할 수 없는 일을 약속하면 계약 단계에서 뒤집히고, 그 부담은 영업사원에게 돌아옵니다.` },
+      { grade: `vbad`,
+        text: `이중화까지는 안 하셔도 괜찮습니다. 규정에는 있지만 실제로 점검을 나오는 경우는 거의 없어서 다들 그냥 쓰고 계십니다. 나중에 문제가 되면 그때 추가하셔도 늦지 않습니다.`,
+        react: `규정을 어기라는 말씀입니까? 그러다 문제 되면 제가 책임지는데요.`,
+        coach: `요건을 무시하라고 권하는 말은 어떤 경우에도 하지 않습니다. 메디세이프는 법이 허용한 제도 안에서 병원을 지키는 제품입니다. 요건을 가볍게 말하는 순간 제품의 근거가 사라집니다.` },
+      { grade: `weak`,
+        text: `그 부분은 제가 정확히 알지 못합니다. 잘못 말씀드리면 안 되니까 회사에 확인해 보겠습니다. 확인되는 대로 따로 연락드릴 테니, 오늘은 다른 내용부터 말씀드려도 되겠습니까?`,
+        react: `네, 확인되면 연락 주세요.`,
+        coach: `모르는 것을 지어내지 않은 것은 좋습니다. 하지만 '네트워크 이중화는 병원이 직접 갖출 항목'이라는 것은 영업사원이 알고 있어야 하는 확정 사실입니다. 거기까지 말하고, 필요한 구성은 제품설명회로 연결하십시오.` },
+    ],
+  },
+  {
+    theme: `비용`,
+    id: `price`, title: `월 300만 원은 비쌉니다`,
+    verify: `비용 비교 수치(전산 1명 연 5,500만, NAS 포함 연 6,100만, 메디세이프 연 3,600만)`,
+    line: `월 300만 원이요? NAS는 이미 사놨고 돈도 안 듭니다. 예산을 올리면 그 설명은 제가 해야 돼요.`,
+    options: [
+      { grade: `best`,
+        text: `지금 NAS보다 금액이 큰 것은 맞습니다. 다만 백업·복구를 제대로 굴리려면 어떤 방식이든 전산 1명, 연 5,500만 원이 붙습니다. 그 사람까지 넣으면 NAS도 연 6,100만 원이고, 메디세이프는 사람 없이 연 3,600만 원, 하루 약 10만 원입니다.`,
+        react: `사람 값까지 넣으면 그렇게 되는군요. 하루 10만 원이라고 하면 원장님께 설명하기도 쉽겠네요.`,
+        coach: `비싸다는 말을 먼저 인정한 뒤 '사람까지 포함한 비용'으로 기준을 바꿨습니다. 팀장이 원장에게 그대로 옮길 문장(하루 약 10만 원)을 쥐여 준 답입니다. 초기 비용이 없어 장비 구입 승인 없이 운영비로 처리된다는 점을 덧붙이면 더 좋습니다.` },
+      { grade: `bad`,
+        text: `가격이 부담되시면 제가 본사에 얘기해서 할인을 받아 오겠습니다. 초기 도입 병원이라고 하면 어느 정도 조정이 될 겁니다. 어느 정도 선이면 검토가 가능하실지 말씀만 해주십시오.`,
+        react: `처음부터 깎아줄 수 있는 가격이면, 원래 가격은 뭡니까?`,
+        coach: `가치를 설명하기 전에 할인부터 꺼내면 가격의 근거가 사라집니다. 기준가는 50TB 월 200만 원, 100TB 월 300만 원이고, 실제 금액은 데이터 용량을 실측한 뒤 안내합니다.` },
+      { grade: `vbad`,
+        text: `길게 보시면 NAS보다 메디세이프가 오히려 저렴합니다. NAS도 몇 년마다 장비를 바꿔야 하고 디스크도 계속 늘려야 하니까, 교체 주기까지 따지면 NAS 쪽이 돈이 더 들어갑니다. 비용은 걱정하지 않으셔도 됩니다.`,
+        react: `NAS 3년 비용이 얼만지는 제가 제일 잘 압니다. 그 계산은 틀렸어요.`,
+        coach: `사실이 아닙니다. 절대 금액은 NAS가 낮습니다. 메디세이프는 '복구가 되는 방식 중 가장 경제적'이며, '저렴'이라는 표현은 쓰지 않습니다. NAS는 복구가 보장되지 않아 같은 선에서 비교할 대상이 아닙니다.` },
+      { grade: `ok`,
+        text: `100TB 기준 월 300만 원, 50TB는 월 200만 원이고 초기 비용은 없습니다. 3년 계약이며, 실제 금액은 병원 데이터 용량을 실측한 뒤에 안내드립니다. 장비를 사시는 게 아니라서 운영비로 처리하실 수 있고, 하루로 나누면 약 10만 원입니다.`,
+        react: `가격표는 알겠습니다. 그런데 그 돈을 왜 써야 하는지는 아직 모르겠네요.`,
+        coach: `가격 정보는 정확합니다. 하지만 '비싸다'는 반응에는 가격표가 아니라 비교 기준으로 답해야 합니다. 전산 1명 인건비를 포함한 비용으로 바꿔 보여주십시오.` },
+    ],
+  },
+  {
+    theme: `회사와 계약`,
+    id: `exit`, title: `3년 계약, 중간에 해지하면요`,
+    verify: `중도 해지 조건, 해지 후 데이터 반환·삭제 조항`,
+    line: `3년 계약이라고 하셨죠. 써 보다가 마음에 안 들면요? 중간에 해지하면 저희 데이터는 어떻게 되는 겁니까.`,
+    options: [
+      { grade: `best`,
+        text: `3년 계약이 기본인 것은 맞습니다. 해지 조건과 해지 뒤 데이터 반환·삭제는 계약서 조항으로 확인하실 부분이라, 설명회 때 그 조항을 그대로 보여드리도록 요청해 두겠습니다. 한 가지 분명한 것은, 원본은 계속 병원에 있고 메디세이프가 갖는 것은 사본이라는 점입니다.`,
+        react: `원본은 어차피 저희한테 있다는 거군요. 해지 조항은 꼭 보여 주세요.`,
+        coach: `계약 조건은 조항으로 답했습니다. 그리고 영업사원이 확실히 말할 수 있는 한 가지(원본은 병원에 남는다)로, 한번 들어가면 묶여 버린다는 걱정을 덜어 줬습니다.` },
+      { grade: `vbad`,
+        text: `그 부분은 전혀 걱정 안 하셔도 됩니다. 마음에 안 드시면 언제든 위약금 없이 해지하실 수 있고, 데이터는 해지하시는 즉시 전부 돌려드린 뒤 완전히 삭제해 드립니다. 3년은 형식적인 기간이라고 보시면 됩니다. 다른 병원들도 다 그렇게 안내받으셨고, 제가 책임지고 그렇게 처리해 드리겠습니다.`,
+        face: `cold`,
+        react: `위약금 없이 언제든이요. 그 말씀, 계약서에 그대로 넣어 달라고 하겠습니다.`,
+        coach: `확인되지 않은 해지 조건을 약속했습니다. 전산팀장은 그 말을 계약 협상에 그대로 가져옵니다. 계약 조건은 조항으로만 답하십시오.` },
+      { grade: `bad`,
+        text: `3년은 생각보다 금방 갑니다. 다른 솔루션들도 보통 3년에서 5년 계약이고, 쓰시다 보면 해지를 생각하실 일 자체가 없을 겁니다. 그런 걱정은 계약하신 뒤에 하셔도 늦지 않습니다.`,
+        react: `계약한 뒤에 걱정하라고요? 그래서 제가 새로 하는 걸 싫어하는 겁니다.`,
+        coach: `묶이는 것에 대한 걱정을 가볍게 넘겼습니다. 변화를 싫어하는 상대에게 '나갈 수 있는 길'이 어떻게 되어 있는지는 도입을 결정하는 핵심 조건입니다.` },
+      { grade: `weak`,
+        text: `해지 관련 내용은 계약 담당 부서에서 다루는 부분이라 제가 정확히 알지 못합니다. 계약을 검토하실 단계가 되면 그때 담당자가 자세히 안내해 드릴 겁니다.`,
+        react: `그때 가서 알면 늦죠. 그런 조건은 미리 알아야 검토를 시작합니다.`,
+        coach: `지어내지 않은 것은 좋지만 다음 단계가 없습니다. 설명회에서 해지·데이터 반환 조항을 보여드리겠다고 지금 약속해야 검토가 시작됩니다.` },
+    ],
+  },
+  {
+    theme: `비용`,
+    id: `size`, title: `저희 용량이면 얼마입니까`,
+    line: `저희는 데이터가 100TB까지는 안 될 겁니다. 한 30TB쯤 될 텐데, 그럼 얼마입니까?`,
+    options: [
+      { grade: `best`,
+        text: `확정된 기준가는 50TB 월 200만 원, 100TB 월 300만 원 두 가지입니다. 그 밖의 용량은 제가 어림해서 말씀드리지 않겠습니다. 병원의 실제 데이터 용량을 실측한 뒤, 본사 확인을 거쳐 정확한 금액으로 회신드리겠습니다.`,
+        react: `어림으로 부르지 않는 건 마음에 드네요. 실측부터 해 봅시다.`,
+        coach: `확정 가격은 50TB와 100TB 두 가지뿐입니다. 그 밖의 용량은 '실측 후 본사 확인을 거쳐 회신'이 정해진 답입니다. 숫자를 지어내지 않는 태도가 전산팀장에게는 신뢰로 읽힙니다.` },
+      { grade: `vbad`,
+        text: `30TB면 50TB 요금의 60% 정도니까 월 120만 원 선으로 보시면 됩니다. 용량에 비례해서 계산하면 그렇게 나옵니다. 그 금액으로 맞춰 드릴 수 있도록 제가 본사에 얘기해 두겠습니다.`,
+        face: `cold`,
+        react: `120만 원이요. 알겠습니다, 그 금액으로 품의 올리겠습니다. 나중에 다른 말씀 하시면 안 됩니다.`,
+        coach: `확정되지 않은 가격을 임의로 계산해 약속했습니다. 전산팀장은 그 숫자를 그대로 품의에 올립니다. 나중에 금액이 달라지면 계약이 아니라 신뢰가 깨집니다.` },
+      { grade: `bad`,
+        text: `데이터는 해마다 늘어납니다. PACS 영상만 해도 금방 차니까 30TB는 곧 넘으실 겁니다. 작은 구간으로 시작했다가 용량이 넘치면 그때 가서 다시 계약해야 하니, 처음부터 100TB로 넉넉하게 계약해 두시는 편이 번거로움도 없고 결국 이득입니다.`,
+        react: `30TB라는데 100TB를 사라고요? 결국 비싼 걸 팔겠다는 얘기네요.`,
+        coach: `상대가 말한 용량을 무시하고 큰 구간을 권하면 다시 '팔러 온 사람'이 됩니다. 금액은 실측 용량을 기준으로 안내한다는 원칙을 그대로 말하십시오.` },
+      { grade: `ok`,
+        text: `확정된 기준가는 50TB 월 200만 원, 100TB 월 300만 원입니다. 초기 비용은 없고 3년 계약입니다. 30TB에 해당하는 금액은 지금 제가 가진 자료에는 나와 있지 않습니다.`,
+        react: `자료에 없으면, 그 금액은 언제 알 수 있습니까?`,
+        coach: `사실대로 말한 것은 좋습니다. 다만 '실측 후 본사 확인을 거쳐 회신드리겠다'는 다음 단계까지 말해야 대화가 이어집니다.` },
+    ],
+  },
+  {
+    theme: `마무리`,
+    id: `close`, title: `그래서 제가 뭘 하면 됩니까`,
+    line: (g) => g >= 50
+      ? `…알겠습니다. 그래서 제가 뭘 하면 됩니까?`
+      : `시간이 다 됐네요. 더 하실 말씀 있습니까?`,
+    options: [
+      { grade: `best`,
+        text: `기술적인 내용은 제가 아니라 히포크랏랩스 기술진이 직접 설명드립니다. 줌으로 제품설명회를 한 번 잡겠습니다. 현재 백업 방식과 희망하시는 시기만 알려주시면 제가 일정을 조율하겠습니다.`,
+        face: (g) => g >= TARGET ? `delighted` : `bored`,
+        react: (g) => g >= TARGET
+          ? `줌이면 부담 없죠. 일정 잡아보세요.`
+          : `설명회는 좀 더 생각해 보겠습니다. 자료부터 보고요.`,
+        coach: `영업사원의 역할은 소개까지입니다. 다음 단계를 '제품설명회'로 분명히 제시했고, 요청에 필요한 정보(현재 백업 방식, 희망 시기)까지 받아 냈습니다.` },
+      { grade: `bad`,
+        text: `그럼 제가 계약서 초안을 바로 준비해 오겠습니다. 3년 계약 기준으로 이번 달 안에 진행하시면 도입 일정도 빠르게 맞춰드릴 수 있고, 연말 전에 설치까지 끝낼 수 있습니다. 필요한 서류는 제가 다 준비하겠습니다.`,
+        react: `계약이요? 저는 아직 검토하겠다는 말도 안 했습니다.`,
+        coach: `단계를 건너뛰었습니다. 전산팀장의 다음 단계는 계약이 아니라 기술 검증입니다. 제품설명회에서 연결 방식과 복구 기준을 직접 확인하게 해야 합니다.` },
+      { grade: `bad`,
+        text: `팀장님께서 괜찮다고 하셨으니 원장님께는 제가 직접 찾아뵙고 말씀드리겠습니다. 팀장님은 바쁘실 테니 따로 신경 쓰지 않으셔도 되고, 결과만 공유드리겠습니다.`,
+        react: `제가 언제 괜찮다고 했습니까? 그리고 원장님 보고는 제가 합니다.`,
+        coach: `마음을 연 전산팀장을 건너뛰면 다시 반대편에 섭니다. 팀장이 직접 검토 의견을 올리도록 돕는 것이 가장 빠른 길입니다.` },
+      { grade: `weak`,
+        text: `오늘은 브로셔를 두고 가겠습니다. 내용이 자세히 정리돼 있으니 천천히 검토해 보시고, 궁금한 점이 생기시거나 필요하시면 언제든 편하게 연락 주십시오.`,
+        react: `네, 그러죠.`,
+        coach: `다음 단계가 없는 마무리입니다. 변화를 싫어하는 상대는 먼저 연락하지 않습니다. 제품설명회 일정을 이 자리에서 제안하십시오.` },
+    ],
+  },
+];
+
+const GRADE = {
+  best: { label: `정확`, cls: `g-best` },
+  ok:   { label: `무난`, cls: `g-ok` },
+  weak: { label: `아쉬움`, cls: `g-weak` },
+  bad:  { label: `위험`, cls: `g-bad` },
+  vbad: { label: `위험`, cls: `g-bad` },
+};
+
+const ZONES = [
+  { min: 0,  quote: `안 합니다` },
+  { min: 25, quote: `글쎄요` },
+  { min: 50, quote: `들어는 보죠` },
+  { min: 70, quote: `설명회 잡아보세요` },
+];
+
+const VERDICTS = {
+  accept: {
+    tag: `수락`,
+    head: `제품설명회로 연결했습니다`,
+    quote: `설명회 잡아보세요. 원장님께 올릴 검토 의견은 제가 정리하겠습니다. 제 일을 늘리는 게 아니라 제 책임을 나눠 지는 거라면, 안 할 이유가 없네요.`,
+    note: `반대하던 전산팀장이 병원 안에서 검토 의견을 올리는 사람이 됐습니다. 이제 아래 항목을 정리해 제품설명회를 요청하십시오.`,
+  },
+  hold: {
+    tag: `보류`,
+    head: `자료만 받고 끝났습니다`,
+    quote: `자료는 두고 가세요. 당장은 어렵고, 내년 예산 볼 때 다시 얘기합시다.`,
+    note: `틀린 말은 없었지만 마음을 움직이지는 못했습니다. '무난'에 그친 답을 '정확'으로 바꾸면 결과가 달라집니다. 특히 책임을 묻는 반대에서 승부가 갈립니다.`,
+  },
+  reject: {
+    tag: `거절`,
+    head: `반대 의견이 굳어졌습니다`,
+    quote: `저희는 지금 이대로 충분합니다. 오늘은 여기까지 하시죠.`,
+    note: `기존 시스템을 부정하거나 과장한 답이 신뢰를 깎았습니다. 아래 복기에서 '위험' 표시된 답부터 확인하십시오.`,
+  },
+  ended: {
+    tag: `면담 종료`,
+    head: `전산팀장이 면담을 끝냈습니다`,
+    quote: `바쁩니다. 다음에 하시죠.`,
+    note: `수용도가 0이 되어 면담이 중간에 끝났습니다. 전산실에서는 과장 한 번, 기존 시스템을 깎아내리는 말 한 번이 치명적입니다.`,
+  },
+};
+
+</script>
+<script>
+(function(){
+  'use strict';
+
+  /* ── 설정: 배포 전에 여기만 고치면 됩니다 ── */
+  const CONFIG = {
+    version: '2026-10-06',              // 내용 기준일
+    owner: '디지털헬스2팀 이현주 PM',     // 제품설명회 요청·현장 제보를 받는 사람
+    contactEmail: '',                   // 받는 메일 주소(비워 두면 메일 앱에서 직접 입력)
+    shortCount: 10,                     // 단축 모드 문항 수
+  };
+
+  const $ = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+  const view = $('#view'), gauge = $('#gauge'), homeBtn = $('#homeBtn'), cardBtn = $('#cardBtn');
+  const STORE  = 'medisafe-it-sim-v3';        // 최고 기록
+  const DEVICE = 'medisafe-it-sim-device';    // 기기 고유 키 + 도전 횟수
+  const PROFILE= 'medisafe-it-sim-profile';   // 수료 화면용 이름·사무소
+  const LOG    = 'medisafe-it-sim-log';       // 실행 기록(나중에 서버 집계로 바꿀 자리)
+
+  const S = { screen:'intro', mode:'practice', kind:'full', set:[], pos:0, unit:0, gauge:START,
+              answers:[], orders:{}, answered:false, ended:false, lastWrong:[] };
+
+  /* ── 저장소 도우미: 막혀 있어도 페이지는 정상 동작 ── */
+  const lsGet = (k) => { try{ return JSON.parse(localStorage.getItem(k) || 'null'); }catch(e){ return null; } };
+  const lsSet = (k, v) => { try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} };
+  function loadBest(){ const v = lsGet(STORE); return v && typeof v.gauge==='number' ? v : null; }
+  function saveBest(rec){ const b = loadBest(); if(!b || rec.gauge > b.gauge) lsSet(STORE, rec); }
+
+  /* ── 실행 기록 훅 ──
+     지금은 이 기기에만 남깁니다. GitHub Pages로 옮긴 뒤 실행 횟수·문항별 오답률을 모으려면
+     이 함수 안에서 서버(Supabase 등)로 보내면 됩니다. 호출 지점: run_start / answer / run_end / speak_end */
+  function track(event, data){
+    const log = lsGet(LOG) || [];
+    log.push(Object.assign({ t: Date.now(), event }, data || {}));
+    lsSet(LOG, log.slice(-300));
+  }
+
+  const clamp = (n) => Math.max(0, Math.min(100, n));
+  const zoneOf = (g) => { let z = 0; ZONES.forEach((o,i)=>{ if(g >= o.min) z = i; }); return z; };
+  const val = (v, g) => typeof v === 'function' ? v(g) : v;
+  const signed = (n) => { const r = Math.round(n); return (r>0?'+':(r<0?'−':'±')) + Math.abs(r); };
+  const esc = (s) => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const bestOf = (r) => r.options.find(o => o.grade === 'best');
+  const curRound = () => ROUNDS[S.set[S.pos]];
+
+  /* ── 답변 순서: 접속 기기마다 다르고, 도전할 때마다 다시 바뀜 ── */
+  function randomKey(){
+    const a = new Uint32Array(2);
+    try{ crypto.getRandomValues(a); }catch(e){ a[0] = Math.random()*4294967296; a[1] = Math.random()*4294967296; }
+    return (a[0].toString(16).padStart(8,'0') + a[1].toString(16).padStart(8,'0')).toUpperCase();
+  }
+  let memDevice = null;
+  function getDevice(){
+    let d = lsGet(DEVICE);
+    if(!(d && typeof d.key === 'string')) d = memDevice;
+    if(!d){ d = { key: randomKey(), runs: 0 }; putDevice(d); }
+    d.runs = d.runs | 0;
+    return d;
+  }
+  function putDevice(d){ memDevice = d; lsSet(DEVICE, d); }
+  function hash32(str){ let h = 2166136261 >>> 0; for(let i=0;i<str.length;i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function rng(seed){ let a = seed >>> 0; return function(){ a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  function shuffleWith(a, rnd){ a = a.slice(); for(let i=a.length-1;i>0;i--){ const j = Math.floor(rnd()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+  function makeOrders(key, run, set){
+    const orders = {}, bestPos = [];
+    set.forEach((ri, n) => {
+      const r = ROUNDS[ri], bi = r.options.indexOf(bestOf(r));
+      let order, salt = 0;
+      do {
+        order = shuffleWith(r.options.map((_,k)=>k), rng(hash32(key + ':' + run + ':' + r.id + ':' + salt)));
+        salt++;   // 정답이 세 문항 연속 같은 번호에 오지 않게 한다
+      } while(salt < 8 && n >= 2 && order.indexOf(bi) === bestPos[n-1] && bestPos[n-1] === bestPos[n-2]);
+      orders[ri] = order; bestPos.push(order.indexOf(bi));
+    });
+    return orders;
+  }
+  /* 단축 모드: 첫 문항·승부처·마무리는 항상 포함, 기술 질문은 최소 2개 */
+  function pickShort(key, run){
+    const rnd = rng(hash32(key + ':short:' + run));
+    const last = ROUNDS.length - 1;
+    const must = ROUNDS.map((r,i)=>i).filter(i => i===0 || i===last || ROUNDS[i].key);
+    const rest = ROUNDS.map((r,i)=>i).filter(i => !must.includes(i));
+    const tech = shuffleWith(rest.filter(i => ROUNDS[i].tech), rnd).slice(0, 2);
+    const others = shuffleWith(rest.filter(i => !tech.includes(i)), rnd).slice(0, Math.max(0, CONFIG.shortCount - must.length - tech.length));
+    return must.concat(tech, others).sort((a,b)=>a-b);
+  }
+
+  /* ── 점수: 문항 수가 달라도 전부 '정확'이면 100 ── */
+  function unitFor(set){ const w = set.reduce((a,ri)=>a + (ROUNDS[ri].key ? KEY_WEIGHT : 1), 0); return (100 - START) / w; }
+  const scoreOf = (r, opt) => S.unit * MULT[opt.grade] * ((opt.grade==='best' && r.key) ? KEY_WEIGHT : 1);
+
+  /* ── 게이지 ── */
+  function paintGauge(delta){
+    const g = Math.round(S.gauge), z = zoneOf(g);
+    $('#gNum').textContent = g;
+    $('#gQuote').textContent = '“' + ZONES[z].quote + '”';
+    const fill = $('#gFill'); fill.style.width = g + '%'; fill.classList.toggle('low', g < 25);
+    $('#gScale').innerHTML = ZONES.map((o,i)=>`<span class="${i===z?'on':''}">${o.quote}</span>`).join('');
+    gauge.setAttribute('aria-label', `전산팀장 수용도 ${g}점, 목표 ${TARGET}점`);
+    const d = $('#gDelta');
+    if(typeof delta === 'number' && S.mode==='practice'){
+      d.textContent = signed(delta); d.className = 'gauge-delta show ' + (delta>=0?'up':'down');
+      clearTimeout(paintGauge.t); paintGauge.t = setTimeout(()=>d.classList.remove('show'), 2600);
+    } else { d.className = 'gauge-delta'; }
+  }
+
+  function show(screen){
+    S.screen = screen;
+    gauge.hidden = screen !== 'sim';
+    homeBtn.hidden = screen === 'intro';
+    cardBtn.hidden = screen === 'card' || screen === 'sim';
+    window.scrollTo(0,0);
+  }
+  const footer = () => `<p class="foot">내용 기준일 ${CONFIG.version} · ${CONFIG.owner.split(' ')[0]} · 가격과 방침이 바뀌면 이 날짜가 바뀝니다</p>`;
+
+  /* ── 표정 ── */
+  const ZFACE = ['cold','skeptical','curious','pleased'];
+  const MOOD = { furious:'neg', annoyed:'neg', bored:'neu', cold:'neu', skeptical:'neu', realize:'pos', curious:'pos', pleased:'pos', delighted:'pos' };
+  function askFace(){
+    const prev = S.answers[S.answers.length-1];
+    if(prev && prev.grade==='vbad') return 'annoyed';
+    if(prev && prev.grade==='bad') return 'cold';
+    const r = curRound();
+    if(r && r.ask) return val(r.ask, S.gauge);
+    return ZFACE[zoneOf(S.gauge)];
+  }
+  function reactFace(opt, g){
+    if(opt.face) return val(opt.face, g);
+    switch(opt.grade){
+      case 'vbad': return 'furious';
+      case 'bad':  return 'annoyed';
+      case 'weak': return 'bored';
+      case 'ok':   return 'skeptical';
+      default:     return g >= 90 ? 'delighted' : (g >= 45 ? 'pleased' : 'curious');
+    }
+  }
+  const itTurn = (text, face, cls='', big=false) => `<div class="turn it ${cls}"><div class="face ${big?'lg':''} ${(big && face==='furious')?'shake':''}">${faceSVG(face)}</div><div class="col"><div class="name">전산팀장 <span class="mood ${MOOD[face]}">${FACES[face].label}</span></div><div class="bubble">${text}</div></div></div>`;
+  const meTurn = (text, cls='') => `<div class="turn me ${cls}" id="myTurn"><div class="who" aria-hidden="true">나</div><div class="col"><div class="name">나 · 영업사원</div><div class="bubble">${text}</div></div></div>`;
+
+  /* ══ 1. 브리핑 ══ */
+  function renderIntro(){
+    show('intro');
+    const best = loadBest(), dev = getDevice();
+    view.innerHTML = `
+      <section class="hero">
+        <div class="eyebrow">병원영업 현장 교육 · 전산실 면담 연습</div>
+        <h1>“안 합니다”를<br>“설명회 잡아보세요”로</h1>
+        <p>새로운 것을 싫어하고, 방화벽과 NAS 백업을 이미 갖춘 전산팀장을 만납니다. 반대와 기술 질문 ${ROUNDS.length}가지에 객관식으로 답하며 수용도를 ${TARGET} 이상으로 올리면 제품설명회를 수락받습니다.</p>
+      </section>
+
+      <section class="sec">
+        <div class="sec-h"><h2>상대는 이런 사람입니다</h2><span class="aside">겉으로 하는 말과 속마음은 다릅니다</span></div>
+        <div class="traits">
+          <div class="trait"><div class="say">“새로운 건 안 합니다”</div>
+            <dl><div><dt>속마음</dt><dd>도입하면 일이 늘고, 사고가 나면 내 책임이 된다</dd></div>
+            <div><dt>대응</dt><dd>더하는 얘기가 아니라 덜어내는 얘기로 시작</dd></div></dl></div>
+          <div class="trait"><div class="say">“보안은 이미 하고 있습니다”</div>
+            <dl><div><dt>속마음</dt><dd>방화벽·백신은 내가 직접 고르고 운영해 온 것이다</dd></div>
+            <div><dt>대응</dt><dd>그대로 두시라고 말한다. 우리는 보안이 아니라 ‘뚫린 다음’</dd></div></dl></div>
+          <div class="trait"><div class="say">“백업도 하고 있습니다”</div>
+            <dl><div><dt>속마음</dt><dd>NAS로 매일 밤 백업하고, 지금까지 문제가 없었다</dd></div>
+            <div><dt>대응</dt><dd>부정하지 않는다. 백업본의 위치와 복구 시간을 질문</dd></div></dl></div>
+        </div>
+      </section>
+
+      <section class="sec">
+        <div class="sec-h"><h2>전할 것은 두 가지입니다</h2></div>
+        <div class="core">
+          <div class="core-card"><div class="k">첫째</div>
+            <h3>보안 솔루션이 아니라 <span class="nb">백업·복구</span> 솔루션</h3>
+            <p>방화벽과 백신은 막는 것, 메디세이프는 뚫린 다음에 되살리는 것. 이미 있는 것과 겹치지 않고, 그 다음 단계를 맡습니다.</p></div>
+          <div class="core-card"><div class="k">둘째</div>
+            <h3><span class="nb">백업·복구</span> 책임의 외주화</h3>
+            <p>지금은 사고가 나면 복구가 전산실 두 사람의 몫입니다. 메디세이프는 그 책임을 계약으로 밖에 맡기는 것입니다.</p></div>
+        </div>
+        <div class="tbl-scroll">
+          <table>
+            <thead><tr><th style="width:30%">책임이 어디에 있는가</th><th>지금 (원내 NAS 백업)</th><th class="ms">메디세이프 도입 후</th></tr></thead>
+            <tbody>
+              <tr><td>매일의 백업 운영</td><td class="now">전산실</td><td class="ms">히포크랏랩스</td></tr>
+              <tr><td>복구 테스트</td><td class="now">전산실 (전체 복구는 해본 적 없음)</td><td class="ms">히포크랏랩스 · 결과 보고서 제출</td></tr>
+              <tr><td>사고가 났을 때 복구</td><td class="now">전산실</td><td class="ms">히포크랏랩스</td></tr>
+              <tr><td>복구 시간에 대한 약속</td><td class="now">없음</td><td class="ms">계약서에 숫자로 명시</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="tbl-note">전산실에 남는 일도 있습니다. 처음에 백업할 데이터 범위를 확인하는 일, 그리고 외부 보관 요건인 네트워크 이중화입니다. 이중화는 병원이 직접 갖추는 항목이고, 저희가 구축해 주거나 비용을 부담하는 영역이 아닙니다. 맡겨도 병원의 관리·감독 책임까지 사라지는 것은 아니므로 “책임이 전혀 없다”고 말하지 않습니다.</p>
+      </section>
+
+      <section class="sec">
+        <div class="sec-h"><h2>말하는 원칙</h2></div>
+        <div class="rules">
+          <div class="rule"><h3>있는 것을 부정하지 않는다</h3><p>방화벽, 백신, NAS, EMR 업체의 백업은 팀장이 직접 만들고 지켜 온 것입니다. 깎아내리는 순간 설득은 끝납니다.</p></div>
+          <div class="rule"><h3>설명보다 질문</h3><p>“백업본, 어디에 두셨습니까?” 먼저 설명하면 반박하고, 질문하면 스스로 답합니다.</p></div>
+          <div class="rule"><h3>숫자는 확정값만, 단정은 금지</h3><p>전산 전문가는 과장을 바로 알아챕니다. 아래 표현은 쓰지 않습니다.</p>
+            <div class="ban"><span>즉시 복구</span><span>연동 전혀 없음</span><span>계약 후 할 일 없음</span><span>보안 전 영역 커버</span><span>저렴</span></div></div>
+          <div class="rule"><h3>기술 질문은 받아 적어 제품설명회로</h3><p>확정된 사실은 직접 말하고, 모르는 것은 지어내지 않습니다. 질문을 받아 적어 히포크랏랩스 기술진에게 미리 전달하면 ‘떠넘기기’가 ‘챙기기’로 바뀝니다.</p></div>
+        </div>
+      </section>
+
+      <section class="sec">
+        <div class="sec-h"><h2>전산팀장의 표정을 읽으십시오</h2><span class="aside">답에 따라 표정이 바뀝니다. 실전 모드에서는 표정이 유일한 단서입니다</span></div>
+        <div class="faces">${Object.keys(FACES).map(k => `<div class="face-item"><div class="face">${faceSVG(k)}</div><div><b>${FACES[k].label}</b><span>${FACES[k].when}</span></div></div>`).join('')}</div>
+      </section>
+
+      <section class="startbox">
+        <h2>면담을 시작합니다</h2>
+        <p class="setting">300병상 규모 종합병원 전산실. 전산 담당은 두 명이 겸직하고, 방화벽과 백신을 운영하며, NAS로 매일 밤 백업합니다. 반대하는 말 사이사이에 서버 담당자다운 기술 질문이 섞여 나옵니다.</p>
+        <div class="pick-h">진행 방식</div>
+        <div class="modes" role="group" aria-label="진행 방식">
+          <button class="mode" data-k="mode" data-v="practice" aria-pressed="${S.mode==='practice'}"><span class="m-t">연습 모드</span><span class="m-d">답할 때마다 해설을 봅니다. 수용도가 0이 되어도 끝까지 진행합니다.</span></button>
+          <button class="mode" data-k="mode" data-v="real" aria-pressed="${S.mode==='real'}"><span class="m-t">실전 모드</span><span class="m-d">해설은 마지막에 봅니다. 수용도가 0이 되면 면담이 끝납니다.</span></button>
+        </div>
+        <div class="pick-h">문항 수</div>
+        <div class="modes" role="group" aria-label="문항 수">
+          <button class="mode" data-k="kind" data-v="full" aria-pressed="${S.kind!=='short'}"><span class="m-t">전체 ${ROUNDS.length}문항</span><span class="m-d">약 20분. 실전 모드로 수락을 받으면 수료 화면이 나옵니다.</span></button>
+          <button class="mode" data-k="kind" data-v="short" aria-pressed="${S.kind==='short'}"><span class="m-t">단축 ${CONFIG.shortCount}문항</span><span class="m-d">약 8분. 매번 다른 문항이 섞여 나옵니다. 승부처는 항상 포함됩니다.</span></button>
+        </div>
+        <button class="cta" id="startBtn">면담 시작하기</button>
+        <div class="sub-actions">
+          <button class="ghost-w" id="speakBtn">말하기 연습</button>
+          <button class="ghost-w" id="cardBtn2">현장 카드 보기</button>
+        </div>
+        <p class="best-rec">답변 순서는 접속한 기기마다 다르고, 도전할 때마다 다시 바뀝니다 · 이 기기 코드 ${dev.key.slice(0,4)}-${dev.key.slice(4,8)}</p>
+        ${best ? `<p class="best-rec">이 기기의 최고 기록(전체 문항) · 수용도 ${best.gauge} (${best.tag})</p>` : ``}
+      </section>
+      ${footer()}`;
+    if(S.kind==='retry') S.kind = 'full';
+    $$('.mode', view).forEach(b => b.addEventListener('click', () => {
+      S[b.dataset.k] = b.dataset.v;
+      $$(`.mode[data-k="${b.dataset.k}"]`, view).forEach(x => x.setAttribute('aria-pressed', String(x===b)));
+    }));
+    $('#startBtn').addEventListener('click', () => startRun(S.kind==='short' ? 'short' : 'full'));
+    $('#speakBtn').addEventListener('click', () => startSpeak());
+    $('#cardBtn2').addEventListener('click', renderCard);
+  }
+
+  /* ══ 2. 시뮬레이션 ══ */
+  function startRun(kind, set){
+    const dev = getDevice(); dev.runs += 1; putDevice(dev);
+    S.kind = kind;
+    S.set = kind==='retry' ? set : (kind==='short' ? pickShort(dev.key, dev.runs) : ROUNDS.map((_,i)=>i));
+    S.unit = unitFor(S.set);
+    S.pos = 0; S.gauge = START; S.answers = []; S.ended = false;
+    S.orders = makeOrders(dev.key, dev.runs, S.set);
+    track('run_start', { kind, mode:S.mode, n:S.set.length, run:dev.runs });
+    show('sim'); paintGauge(); renderRound();
+  }
+
+  function roundHead(){
+    const r = curRound();
+    const dots = S.set.map((_,i)=>`<i class="${i<S.pos?'done':(i===S.pos?'now':'')}"></i>`).join('');
+    return `<div class="round-h">
+      <span class="round-n">질문 ${S.pos+1} <span>/ ${S.set.length}</span></span>
+      <span class="pill ${r.tech?'tech':''}" style="display:inline-block">${r.theme}</span>
+      ${(r.key && S.mode==='practice') ? `<span class="key-flag">승부처</span>` : ``}
+      ${S.kind==='retry' ? `<span class="key-flag">오답 복습</span>` : ``}
+      <span class="dots" aria-hidden="true">${dots}</span>
+    </div>`;
+  }
+
+  function renderRound(){
+    S.answered = false;
+    const ri = S.set[S.pos], r = ROUNDS[ri], order = S.orders[ri];
+    view.innerHTML = roundHead() + `
+      <div id="thread" aria-live="polite">${itTurn(val(r.line, S.gauge), askFace())}</div>
+      <div id="choice">
+        <div class="ask">어떻게 답하시겠습니까? <span class="hint">숫자 키 1–4로도 고를 수 있습니다</span></div>
+        <div class="opts">${order.map((oi,n)=>`<button class="opt" data-oi="${oi}"><span class="opt-n">${n+1}</span><span>${r.options[oi].text}</span></button>`).join('')}</div>
+      </div>
+      <div id="after"></div>`;
+    $$('.opt', view).forEach(b => b.addEventListener('click', () => choose(+b.dataset.oi)));
+    window.scrollTo(0,0);
+    view.focus({preventScroll:true});
+  }
+
+  function choose(oi){
+    if(S.answered) return; S.answered = true;
+    const ri = S.set[S.pos], r = ROUNDS[ri], opt = r.options[oi], best = bestOf(r);
+    const delta = scoreOf(r, opt);
+    S.gauge = clamp(S.gauge + delta);
+    const face = reactFace(opt, S.gauge);
+    S.answers.push({ ri, oi, grade:opt.grade, delta, face });
+    track('answer', { q:r.id, oi, grade:opt.grade, kind:S.kind, mode:S.mode });
+    const last = S.pos === S.set.length-1;
+    const dead = S.mode==='real' && S.gauge <= 0;
+    if(dead) S.ended = true;
+
+    $('#choice').remove();
+    const thread = $('#thread');
+    thread.insertAdjacentHTML('beforeend', meTurn(opt.text, 'pop') + itTurn(val(opt.react, S.gauge), face, 'pop d1', true));
+    if(dead) thread.insertAdjacentHTML('beforeend', `<div class="sys pop d2">수용도가 0이 되었습니다. 전산팀장이 면담을 끝냈습니다.</div>`);
+
+    const g = GRADE[opt.grade];
+    let html = '';
+    if(S.mode==='practice'){
+      html += `<div class="coach ${g.cls} pop d2">
+        <div class="coach-h"><span class="badge">${g.label}</span><span class="d">수용도 ${signed(delta)}</span></div>
+        <p>${opt.coach}</p>
+        ${opt.grade!=='best' ? `<div class="better"><div class="bh">더 나은 답</div><p>${best.text}</p></div>` : ``}
+      </div>`;
+    }
+    html += `<div class="next-row pop ${S.mode==='practice'?'d3':'d2'}"><button class="cta" id="nextBtn">${(last||dead) ? '결과 보기' : '다음 질문 듣기'}</button></div>`;
+    $('#after').innerHTML = html;
+    $('#nextBtn').addEventListener('click', () => { if(last||dead) renderResult(); else { S.pos++; renderRound(); } });
+
+    setTimeout(()=>paintGauge(delta), 380);
+    const mine = $('#myTurn');
+    if(mine) mine.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto':'smooth', block:'start' });
+    setTimeout(()=>{ const n = $('#nextBtn'); if(n) n.focus({preventScroll:true}); }, 1150);
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if(S.screen!=='sim' || S.answered || e.metaKey || e.ctrlKey || e.altKey) return;
+    const n = parseInt(e.key,10);
+    if(n>=1 && n<=4){ const b = $$('.opt', view)[n-1]; if(b){ e.preventDefault(); b.click(); } }
+  });
+
+  /* ══ 3. 결과 ══ */
+  function cheatHTML(){
+    return `
+      <div class="sheet-card"><p class="one-line">메디세이프는 <span class="nb">백업·복구</span> 솔루션이면서, <span class="nb">백업·복구</span> 책임을 계약으로 밖에 맡기는 것입니다.</p></div>
+      <div class="cheat">
+        <div class="c"><h3>그대로 쓰는 질문 세 가지</h3>
+          <ul><li>백업본, 어디에 두셨습니까?</li><li>전체 복구에 얼마나 걸리는지 측정해 보셨습니까?</li><li>전산 담당은 몇 분이십니까?</li></ul></div>
+        <div class="c"><h3>쓰지 않는 말</h3>
+          <ul><li>즉시 복구, “4시간이면 됩니다” 같은 단정</li><li>연동 전혀 없음, 계약 후 할 일 없음</li><li>보안 전 영역 커버, 저렴 (→ 경제적)</li><li>“책임이 전혀 없습니다”, 확정되지 않은 도입 사례</li></ul></div>
+        <div class="c wide"><h3>기술·계약 질문을 받았을 때</h3>
+          <ul><li>확정된 사실은 그 자리에서 말한다 — 하루 한 번 백업(잠정, 계약 시 확정) · 복구는 히포크랏랩스가 수행, 24시간 대응 · ISO/IEC 27001·27017·27018·27799 인증 · 데이터는 국내에 서버를 둔 아마존·구글 클라우드에 분산 저장 · 원본은 병원에 남고 메디세이프는 사본 · 네트워크 이중화는 병원이 직접 갖추는 항목(대신 구축하지 않음)</li><li>모르는 것은 지어내지 않는다 — 기술 수치, 복구 방식, 보상·해지 조건, 원가와 마진, 확인 안 된 인증(ISMS-P 보유 여부), 회사의 다른 사업</li><li>질문을 받아 적어 설명회 전에 기술진에게 전달한다 — 계약 조건은 말이 아니라 조항으로 보여 준다</li></ul></div>
+      </div>`;
+  }
+
+  function renderResult(){
+    show('result');
+    const g = Math.round(S.gauge), n = S.set.length;
+    const count = { best:0, ok:0, weak:0, bad:0 };
+    S.answers.forEach(a => { count[a.grade==='vbad' ? 'bad' : a.grade]++; });
+    const wrong = S.answers.filter(a => a.grade!=='best').map(a => a.ri);
+    S.lastWrong = wrong;
+
+    let kind, v;
+    if(S.kind==='retry'){
+      kind = count.best===n ? 'accept' : (count.best >= n/2 ? 'hold' : 'reject');
+      v = { tag:'오답 복습', head:`${n}문항 중 ${count.best}문항을 정확히 답했습니다`,
+            quote: count.best===n ? '이번에는 막히는 데가 없으시네요.' : '아직 걸리는 데가 있습니다.',
+            note: count.best===n ? '틀렸던 문항을 모두 바로잡았습니다. 실전 모드·전체 문항으로 수료에 도전해 보십시오.' : '남은 문항은 아래 복기에서 ‘더 나은 답’을 소리 내어 읽어 본 뒤 다시 풀어 보십시오.' };
+    } else {
+      kind = S.ended ? 'ended' : (g >= TARGET ? 'accept' : (g >= HOLD ? 'hold' : 'reject'));
+      v = VERDICTS[kind];
+      if(S.kind==='full') saveBest({ gauge:g, tag:v.tag });
+    }
+    track('run_end', { kind:S.kind, mode:S.mode, gauge:g, verdict:kind, best:count.best, n });
+    const certOK = S.kind==='full' && S.mode==='real' && kind==='accept';
+
+    const sheet = S.set.map((ri,i) => { const a = S.answers[i];
+      return `<i class="${a ? GRADE[a.grade].cls : 'g-none'}" title="${a ? GRADE[a.grade].label : '듣지 못함'}">${i+1}</i>`; }).join('');
+    const reviews = S.set.map((ri,i) => {
+      const r = ROUNDS[ri], a = S.answers[i];
+      if(!a) return `<details class="review locked"><summary onclick="return false"><span class="rn">${i+1}</span><span class="rt">면담이 끝나 듣지 못한 질문</span></summary></details>`;
+      const opt = r.options[a.oi], best = bestOf(r), gr = GRADE[a.grade];
+      return `<details class="review" ${a.grade!=='best'?'open':''}>
+        <summary><span class="rn">${i+1}</span><span class="rt">“${r.title}”</span><span class="badge ${gr.cls}">${gr.label}</span></summary>
+        <div class="body">
+          <div class="lbl">내가 한 답 <span class="mood ${MOOD[a.face]}">전산팀장 ${FACES[a.face].label}</span></div><div class="q">${opt.text}</div>
+          <div class="lbl">해설</div><div class="why">${opt.coach}</div>
+          ${a.grade!=='best' ? `<div class="lbl b">더 나은 답</div><div class="q">${best.text}</div>` : ``}
+        </div></details>`;
+    }).join('');
+
+    view.innerHTML = `
+      <section class="verdict ${kind}">
+        <div class="verdict-top">
+          <div class="face">${faceSVG(({accept:'delighted',hold:'bored',reject:'annoyed',ended:'furious'})[kind])}</div>
+          <div><span class="tag">${v.tag}</span><h1>${v.head}</h1></div>
+        </div>
+        <blockquote><cite>전산팀장</cite>${v.quote}</blockquote>
+        <p class="note">${v.note}</p>
+      </section>
+
+      <div class="score">
+        <div class="big">최종 수용도<b>${g}<small> / 100</small></b>${S.kind==='retry' ? '복습 점수' : '수락 기준 ' + TARGET}</div>
+        <div>
+          <div class="sheet" aria-label="질문별 결과">${sheet}</div>
+          <div class="legend"><span>정확 ${count.best}</span><span>무난 ${count.ok}</span><span>아쉬움 ${count.weak}</span><span>위험 ${count.bad}</span></div>
+        </div>
+      </div>
+
+      ${certOK ? `<section class="sec" id="certSec"></section>` : (S.kind!=='retry' && kind==='accept' ? `<p class="cert-hint">수료 화면은 <b>실전 모드 · 전체 ${ROUNDS.length}문항</b>으로 수락을 받으면 나옵니다.</p>` : ``)}
+
+      <div class="actions top">
+        ${wrong.length ? `<button class="cta" id="wrongBtn">틀린 ${wrong.length}문항만 다시 풀기</button>` : ``}
+        <button class="${wrong.length?'ghost':'cta'}" id="retryBtn">처음부터 다시 하기</button>
+        <button class="ghost" id="speakBtn">말하기 연습</button>
+      </div>
+
+      <section class="sec">
+        <div class="sec-h"><h2>복기</h2><span class="aside">‘정확’이 아니었던 답은 펼쳐 두었습니다</span></div>
+        ${reviews}
+      </section>
+
+      <section class="sec">
+        <div class="sec-h"><h2>현장에 가져갈 것</h2></div>
+        ${cheatHTML()}
+        <div class="req">
+          <h3>${kind==='accept' ? '수락을 받았다면 제품설명회를 요청합니다' : '현장에서 수락을 받으면 제품설명회를 요청합니다'}</h3>
+          <p>${CONFIG.owner}에게 병원명 · 병상수 · 결정권자(직책) · 현재 백업 방식 · 희망 시기 · 미팅 방법을 전달하면 설명회 방식(줌 추천 · 대면)을 정해 안내합니다.</p>
+          <button class="ghost-w" id="reqBtn">제품설명회 요청 양식 열기</button>
+        </div>
+        <div class="actions"><button class="ghost" id="briefBtn">브리핑으로 돌아가기</button></div>
+      </section>
+      ${footer()}`;
+    if(wrong.length) $('#wrongBtn').addEventListener('click', () => startRun('retry', wrong.slice().sort((a,b)=>a-b)));
+    $('#retryBtn').addEventListener('click', () => startRun(S.kind==='retry' ? 'full' : S.kind));
+    $('#speakBtn').addEventListener('click', () => startSpeak(wrong.length ? wrong.slice().sort((a,b)=>a-b) : null));
+    $('#briefBtn').addEventListener('click', renderIntro);
+    $('#reqBtn').addEventListener('click', () => renderCard('reqForm'));
+    if(certOK) renderCert(g, count.best);
+    view.focus({preventScroll:true});
+  }
+
+  /* ── 수료 화면: 실전 모드 · 전체 문항 · 수락 ── */
+  function renderCert(g, bestCount){
+    const box = $('#certSec'), prof = lsGet(PROFILE) || { office:'', name:'' };
+    const now = new Date(), pad = (x)=>String(x).padStart(2,'0');
+    const stamp = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    box.innerHTML = `
+      <div class="sec-h"><h2>수료 화면</h2><span class="aside">사무소와 이름을 넣고 이 화면을 캡처해 제출하십시오</span></div>
+      <div class="cert-form">
+        <label>사무소<input id="cOffice" type="text" autocomplete="organization" value="${esc(prof.office)}" placeholder="예: 서울2사업부 ○○사무소"></label>
+        <label>이름<input id="cName" type="text" autocomplete="name" value="${esc(prof.name)}" placeholder="이름"></label>
+      </div>
+      <div class="cert" id="certCard"></div>`;
+    const paint = () => {
+      const office = $('#cOffice').value.trim(), name = $('#cName').value.trim();
+      lsSet(PROFILE, { office, name });
+      const dev = getDevice();
+      const code = hash32([office, name, stamp, g, bestCount, dev.key, CONFIG.version].join('|')).toString(16).toUpperCase().padStart(8,'0');
+      $('#certCard').innerHTML = `
+        <div class="cert-top"><span class="cert-mark">수료</span><span>메디세이프 현장 시뮬레이션 · 전산실 편</span></div>
+        <div class="cert-name">${name ? esc(name) : '<em>이름을 입력하세요</em>'}<small>${esc(office)}</small></div>
+        <dl class="cert-dl">
+          <div><dt>결과</dt><dd>실전 모드 · 전체 ${ROUNDS.length}문항 · 수락</dd></div>
+          <div><dt>최종 수용도</dt><dd>${g} / 100 (정확 ${bestCount}문항)</dd></div>
+          <div><dt>일시</dt><dd>${stamp}</dd></div>
+          <div><dt>내용 기준일</dt><dd>${CONFIG.version}</dd></div>
+          <div><dt>확인 코드</dt><dd>${code.slice(0,4)}-${code.slice(4)} · 기기 ${dev.key.slice(0,4)}</dd></div>
+        </dl>`;
+    };
+    $('#cOffice').addEventListener('input', paint); $('#cName').addEventListener('input', paint); paint();
+  }
+
+  /* ══ 4. 현장 카드: 면담 직전 1분 복습 + 제품설명회 요청 + 새로 들은 반대 제보 ══ */
+  function composeBox(id, title, desc, fields, build){
+    return `<div class="form-box" id="${id}">
+      <h3>${title}</h3><p class="form-d">${desc}</p>
+      <div class="form-grid">${fields.map(f => f.type==='textarea'
+        ? `<label class="wide">${f.label}<textarea data-f="${f.key}" rows="3" placeholder="${f.ph||''}"></textarea></label>`
+        : (f.type==='select'
+          ? `<label>${f.label}<select data-f="${f.key}">${f.options.map(o=>`<option>${o}</option>`).join('')}</select></label>`
+          : `<label>${f.label}<input data-f="${f.key}" type="text" placeholder="${f.ph||''}"></label>`)).join('')}</div>
+      <label class="wide out-l">보낼 내용<textarea class="out" readonly rows="7"></textarea></label>
+      <div class="form-actions"><button class="cta sm" data-act="copy">내용 복사</button><a class="ghost sm" data-act="mail" href="#">메일 앱으로 보내기</a><span class="form-msg" role="status"></span></div>
+    </div>`;
+  }
+  function wireCompose(id, subject, build){
+    const box = $('#'+id); if(!box) return;
+    const out = $('.out', box), msg = $('.form-msg', box), mail = $('[data-act=mail]', box);
+    const read = () => { const o = {}; $$('[data-f]', box).forEach(el => o[el.dataset.f] = el.value.trim()); return o; };
+    const paint = () => {
+      out.value = build(read());
+      mail.href = 'mailto:' + CONFIG.contactEmail + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(out.value);
+    };
+    $$('[data-f]', box).forEach(el => el.addEventListener('input', paint)); paint();
+    $('[data-act=copy]', box).addEventListener('click', async () => {
+      let ok = false;
+      try{ await navigator.clipboard.writeText(out.value); ok = true; }catch(e){
+        try{ out.focus(); out.select(); ok = document.execCommand('copy'); }catch(e2){ ok = false; }
+      }
+      msg.textContent = ok ? '복사했습니다. 메신저나 메일에 붙여 넣으세요.' : '복사가 막혀 있습니다. ‘보낼 내용’을 길게 눌러 직접 복사하세요.';
+    });
+  }
+
+  function renderCard(focusId){
+    show('card');
+    view.innerHTML = `
+      <section class="hero slim">
+        <div class="eyebrow">면담 직전 1분 복습</div>
+        <h1>현장 카드</h1>
+        <p>전산실에 들어가기 전에 이 화면만 다시 보십시오. 아래에서 제품설명회를 요청하고, 현장에서 새로 들은 반대도 알려 주십시오.</p>
+      </section>
+      <section class="sec">${cheatHTML()}</section>
+      <section class="sec">
+        <div class="sec-h"><h2>수락을 받았다면</h2></div>
+        ${composeBox('reqForm', '제품설명회 요청', `${CONFIG.owner}에게 전달됩니다. 기술 설명은 히포크랏랩스 기술진이 직접 합니다.`, [
+          { key:'hospital', label:'병원명', ph:'예: ○○병원' }, { key:'beds', label:'병상수', ph:'예: 320' },
+          { key:'dm', label:'결정권자(직책)', ph:'예: 전산팀장 ○○○' }, { key:'backup', label:'현재 백업 방식', ph:'예: 원내 NAS, EMR 업체 백업' },
+          { key:'when', label:'희망 시기', ph:'예: 10월 둘째 주' }, { key:'how', label:'미팅 방법', type:'select', options:['줌(추천)','대면'] },
+          { key:'q', label:'전산팀장이 미리 물어본 기술 질문', type:'textarea', ph:'예: 회선 1G, 야간 PACS 전송 23시~03시. 초기 전송 방식 문의' },
+          { key:'me', label:'요청자(사무소 · 이름)', ph:'예: ○○사무소 홍길동' } ])}
+      </section>
+      <section class="sec">
+        <div class="sec-h"><h2>새로운 반대를 들었다면</h2><span class="aside">보내 주신 내용은 다음 문항이 됩니다</span></div>
+        ${composeBox('objForm', '현장에서 들은 반대·질문 제보', '이 시뮬레이션에 없는 반대나 기술 질문을 들었다면 그대로 적어 주십시오.', [
+          { key:'who', label:'누가 (직책)', ph:'예: 전산팀장, 행정원장' }, { key:'size', label:'병원 규모', ph:'예: 250병상' },
+          { key:'said', label:'들은 말 그대로', type:'textarea', ph:'예: “백업은 그룹웨어 업체에서 같이 해 주는데요”' },
+          { key:'mine', label:'내가 한 답과 반응', type:'textarea', ph:'어떻게 답했고, 상대가 어떻게 반응했는지' },
+          { key:'me', label:'제보자(사무소 · 이름)', ph:'예: ○○사무소 홍길동' } ])}
+      </section>
+      <div class="actions"><button class="cta" id="goStart">면담 연습하러 가기</button></div>
+      ${footer()}`;
+    wireCompose('reqForm', '[메디세이프] 제품설명회 요청', f =>
+      `[메디세이프 제품설명회 요청]\n병원명: ${f.hospital}\n병상수: ${f.beds}\n결정권자(직책): ${f.dm}\n현재 백업 방식: ${f.backup}\n희망 시기: ${f.when}\n미팅 방법: ${f.how}\n사전 기술 질문: ${f.q}\n요청자: ${f.me}`);
+    wireCompose('objForm', '[메디세이프] 현장 반대·질문 제보', f =>
+      `[메디세이프 현장 반대·질문 제보]\n누가: ${f.who}\n병원 규모: ${f.size}\n들은 말: ${f.said}\n내 답과 반응: ${f.mine}\n제보자: ${f.me}\n(시뮬레이션 기준일 ${CONFIG.version})`);
+    $('#goStart').addEventListener('click', renderIntro);
+    if(typeof focusId === 'string'){ const el = $('#'+focusId); if(el) el.scrollIntoView({ block:'start' }); }
+  }
+
+  /* ══ 5. 말하기 연습: 고르는 것이 아니라 말로 꺼내는 훈련 ══ */
+  const SP = { set:[], pos:0, ok:[], again:[] };
+  function startSpeak(set){
+    SP.set = (set && set.length) ? set : ROUNDS.map((_,i)=>i);
+    SP.pos = 0; SP.ok = []; SP.again = [];
+    show('speak'); renderSpeak();
+  }
+  function renderSpeak(){
+    const ri = SP.set[SP.pos], r = ROUNDS[ri];
+    view.innerHTML = `
+      <div class="round-h">
+        <span class="round-n">말하기 ${SP.pos+1} <span>/ ${SP.set.length}</span></span>
+        <span class="pill ${r.tech?'tech':''}" style="display:inline-block">${r.theme}</span>
+      </div>
+      <div id="thread">${itTurn(val(r.line, 60), r.tech ? 'skeptical' : 'cold', '', true)}</div>
+      <div class="speak-box">
+        <h3>화면을 보지 말고, 소리 내어 답해 보십시오</h3>
+        <p>객관식은 좋은 답을 알아보는 연습입니다. 현장에서는 보기 없이 말해야 합니다. 다 말한 뒤에 모범 답과 비교하십시오.</p>
+        <button class="cta" id="revealBtn">다 말했습니다 · 모범 답 보기</button>
+      </div>
+      <div id="after"></div>`;
+    $('#revealBtn').addEventListener('click', () => {
+      const best = bestOf(r);
+      $('.speak-box', view).remove();
+      $('#after').innerHTML = `
+        <div class="coach g-best pop" style="margin-left:0"><div class="coach-h"><span class="badge">모범 답</span></div><p>${best.text}</p>
+          <div class="better"><div class="bh">왜 이 답인가</div><p>${best.coach}</p></div></div>
+        <div class="ask">방금 한 말과 비교하면?</div>
+        <div class="self"><button class="cta" data-s="ok">핵심을 말했다</button><button class="ghost" data-s="again">다시 연습이 필요하다</button></div>`;
+      $$('.self button', view).forEach(b => b.addEventListener('click', () => {
+        (b.dataset.s==='ok' ? SP.ok : SP.again).push(ri);
+        if(SP.pos === SP.set.length-1) renderSpeakEnd(); else { SP.pos++; renderSpeak(); window.scrollTo(0,0); }
+      }));
+    });
+    window.scrollTo(0,0);
+  }
+  function renderSpeakEnd(){
+    track('speak_end', { n:SP.set.length, ok:SP.ok.length });
+    view.innerHTML = `
+      <section class="verdict ${SP.again.length ? 'hold' : 'accept'}">
+        <div class="verdict-top"><div class="face">${faceSVG(SP.again.length ? 'curious' : 'pleased')}</div>
+          <div><span class="tag">말하기 연습</span><h1>${SP.set.length}문항 중 ${SP.ok.length}문항은 말로 꺼낼 수 있습니다</h1></div></div>
+        <p class="note">${SP.again.length ? '아래 문항은 모범 답을 소리 내어 두 번 읽은 뒤 다시 해 보십시오. 외우는 것이 아니라 순서(인정 → 사실 → 다음 단계)를 입에 붙이는 것이 목표입니다.' : '모든 문항을 말로 꺼낼 수 있습니다. 실전 모드·전체 문항으로 수료에 도전해 보십시오.'}</p>
+      </section>
+      ${SP.again.length ? `<section class="sec"><div class="sec-h"><h2>다시 연습할 문항</h2></div>
+        ${SP.again.map(ri => `<details class="review"><summary><span class="rt">“${ROUNDS[ri].title}”</span></summary><div class="body"><div class="lbl b">모범 답</div><div class="q">${bestOf(ROUNDS[ri]).text}</div></div></details>`).join('')}</section>` : ``}
+      <div class="actions top">
+        ${SP.again.length ? `<button class="cta" id="againBtn">이 ${SP.again.length}문항만 다시 말해 보기</button>` : ``}
+        <button class="${SP.again.length?'ghost':'cta'}" id="briefBtn">브리핑으로 돌아가기</button>
+      </div>${footer()}`;
+    if(SP.again.length) $('#againBtn').addEventListener('click', () => startSpeak(SP.again.slice()));
+    $('#briefBtn').addEventListener('click', renderIntro);
+    window.scrollTo(0,0);
+  }
+
+  /* ══ 6. 검수용 전체 문항: 주소 끝에 #review, 또는 로고를 5번 누르면 열림 ══ */
+  function renderReview(){
+    show('review');
+    const flagged = ROUNDS.filter(r => r.verify);
+    view.innerHTML = `
+      <section class="hero slim">
+        <div class="eyebrow">히포크랏랩스 · 법무 검수용</div>
+        <h1>전체 문항과 정답</h1>
+        <p>이 시뮬레이션의 ‘정확’ 답은 영업사원의 공식 화법이 됩니다. 사실과 다르거나 약속할 수 없는 표현이 있는지 확인해 주십시오. 문항 ${ROUNDS.length}개 · 확인 필요 ${flagged.length}건 · 내용 기준일 ${CONFIG.version}</p>
+      </section>
+      <section class="sec">
+        <div class="sec-h"><h2>확인이 필요한 항목</h2></div>
+        <ol class="verify-list">${ROUNDS.map((r,i)=> r.verify ? `<li><b>${i+1}번 “${r.title}”</b><span>${r.verify}</span></li>` : '').join('')}</ol>
+      </section>
+      <section class="sec">
+        <div class="sec-h"><h2>문항 전체</h2><span class="aside">인쇄하면 모든 문항이 펼쳐진 채로 나옵니다</span></div>
+        ${ROUNDS.map((r,i) => `<article class="rv">
+          <div class="rv-h"><span class="rn">${i+1}</span><span class="pill ${r.tech?'tech':''}" style="display:inline-block">${r.theme}</span>${r.key?'<span class="key-flag">승부처</span>':''}<b>“${r.title}”</b></div>
+          <p class="rv-line"><em>전산팀장</em> ${val(r.line, 60)}</p>
+          ${r.verify ? `<p class="rv-verify"><b>확인 필요</b> ${r.verify}</p>` : ``}
+          ${r.options.slice().sort((a,b)=> (a.grade==='best'?-1:0) - (b.grade==='best'?-1:0)).map(o => `<div class="rv-opt ${GRADE[o.grade].cls}">
+            <div><span class="badge">${GRADE[o.grade].label}</span></div>
+            <p class="rv-t">${o.text}</p>
+            <p class="rv-r"><em>반응</em> ${val(o.react, 80)}</p>
+            <p class="rv-c"><em>해설</em> ${o.coach}</p></div>`).join('')}
+        </article>`).join('')}
+      </section>
+      <div class="actions"><button class="ghost" id="briefBtn">브리핑으로 돌아가기</button></div>
+      ${footer()}`;
+    $('#briefBtn').addEventListener('click', renderIntro);
+  }
+
+  /* ── 시작 ── */
+  homeBtn.addEventListener('click', renderIntro);
+  cardBtn.addEventListener('click', () => renderCard());
+  let taps = 0, tapT = null;
+  $('.logo').addEventListener('click', () => { taps++; clearTimeout(tapT); tapT = setTimeout(()=>taps=0, 1500); if(taps >= 5){ taps = 0; renderReview(); } });
+  function route(){ const h = (location.hash||'').toLowerCase(); if(h==='#review') renderReview(); else if(h==='#card') renderCard(); else renderIntro(); }
+  window.addEventListener('hashchange', route);
+  route();
+})();
+
+</script>
+</body>
+</html>
+
+</body></html>
